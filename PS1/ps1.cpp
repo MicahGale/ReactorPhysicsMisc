@@ -1,4 +1,4 @@
-#include <stdio>
+#include <stdio.h>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -7,8 +7,13 @@
 #include <sstream>
 
 
+//function prototypes
+static double calcFaddeeva(double z);
+
+
 int main()  {
-	printf("hello world");
+	printf("hello world\n");
+	calcFaddeeva(1.0);
 	return 0;
 
 }
@@ -17,12 +22,14 @@ static double calcFaddeeva(double z) {
 	std::array<char, 128> buffer;
 	std::string result;
 	//convert input into string
-	std:ostringstream strs;
+	std::ostringstream strs;
 	strs << z;
-	std::string str =  strs.str();
+	std::string Zstr =  strs.str();
+
+	std::string cmd = "python3 feddeeva.py "+Zstr;
 	
 	// runs command
-	std::shared_ptr<FILE> pipe(popen("python3 bleeh.py", "r"), pclose);
+	std::shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
 	if(!pipe)
 		throw std::runtime_error("popen() failed!");
 	
