@@ -18,7 +18,7 @@ static double calcFaddeeva(double z);
 *which is uniformally distributed along the range.
 */
 static double getSquiggle() {
-	double squiggle=(rand()/(double)(RAND_MAX+1));
+	double squiggle=(rand()/((double)(RAND_MAX)+1));
 	return squiggle;
 }
 static void walkRandomly() {
@@ -49,7 +49,7 @@ static double calcFaddeeva(double z) {
 	string cmd = "python3 feddeeva.py "+Zstr;
 	
 	// runs command
-	shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
+/*	shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
 	if(!pipe)
 		throw runtime_error("popen() failed!");
 	
@@ -57,5 +57,5 @@ static double calcFaddeeva(double z) {
 	while(!feof(pipe.get())) {
 		if (fgets(buffer.data(), 128, pipe.get()) !=nullptr)
 			result += buffer.data();
-	}
+	}*/
 }
