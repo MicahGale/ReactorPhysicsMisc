@@ -4,8 +4,12 @@
 #include <stdexcept>
 #include <string>
 #include <array>
+#include <vector>
 #include <sstream>
 #include <stdlib.h>   //srand()
+#include "../lib/materials.h" //material object
+
+
 
 //namespace
 using namespace std;
@@ -21,10 +25,17 @@ static double getSquiggle() {
 	double squiggle=(rand()/((double)(RAND_MAX)+1));
 	return squiggle;
 }
-static void walkRandomly() {
-	srand(25);
-	for(int i=0;i<25; i++) {
-		cout<<getSquiggle()<<endl; //test the random generator
+
+/**
+ *Does a random Monte Carlo walk.
+ *
+ *@Param the materials for the array
+ */
+static void walkRandomly(vector<material> materials, int walks) {
+	srand(25);  //seed the random number gen
+	
+	for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
+
 	}
 }
 /**
@@ -32,7 +43,8 @@ static void walkRandomly() {
 *
 */
 int main()  {
-	walkRandomly();
+	vector <material> materials;
+	walkRandomly(materials, 10);
 	//calcFaddeeva(1.0);
 	return 0;
 
