@@ -25,7 +25,31 @@ static double getSquiggle() {
 	double squiggle=(rand()/((double)(RAND_MAX)+1));
 	return squiggle;
 }
-
+/**
+*based on cross-sections decide which material to scatter off of
+*
+*@param materials, all of the materials in this problem
+*@param E the energy of the current neutron
+*@return the index of the material which was randomly chosen
+*/
+static int selectMat(vector<material> materials, double E) {
+	double squiggle=rand();
+	double total = 0;
+	double accum = 0;
+	//find the sum of all of the cross sections
+	for(int i=0; i<materials.size(); i++) {
+		total+=materials[i].getMacroSigT(E);
+	}
+	//run through it again with to find which one is right
+	for(int i=0;i<materials.size(); i++) {
+		accum+=materials[i].getMacroSigT(E); //adds this materials fraction of it
+		if(squiggle<=accum) {
+			return i; //if the material is the selected one return it 
+		}
+	}
+	//if all else fails default to 0
+	return 0;
+}
 /**
  *Does a random Monte Carlo walk.
  *
@@ -33,9 +57,13 @@ static double getSquiggle() {
  */
 static void walkRandomly(vector<material> materials, int walks) {
 	srand(25);  //seed the random number gen
+	double energy, squiggle;
 	
 	for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
-
+		energy=1e3;         //start off the neutron at the high energy
+		for(int j=0; energy>=1; j++) { //run while the energy is high enough and keep track of loops
+			squiggle=rand();
+		}
 	}
 }
 /**

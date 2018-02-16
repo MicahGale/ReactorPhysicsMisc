@@ -11,13 +11,14 @@ class material {
 	string name;
 	double sigPot; //potential scattering
 	double N;       //number density
-	
-	private:
+	int A;	
+	public:
 	/**
 	 *Constructor 
 	 *
 	 */	
-	material (double N, double sigPot) {
+	material (int A, double N, double sigPot) {
+		this->A=A;
 		this->sigPot=sigPot;
 		this->N=N;
 	}
