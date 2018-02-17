@@ -64,8 +64,12 @@ static void walkRandomly(vector<material> materials, int walks) {
 		for(int j=0; energy>=1; j++) { //run while the energy is high enough and keep track of loops
 			mat=selectMat(materials,energy); //find the right material
 			interact=materials[mat].randomWalk(energy); //do the random walk
-			squiggle=rand();
-			energy=0;
+			
+			if(interact.type==event::SCATTER) {
+				energy=interact.E;   //update the energy
+			} else  { //assume absorption TODO fission here 
+
+			}
 		}
 	}
 }
