@@ -10,7 +10,6 @@
 #include "../lib/materials.h" //material object
 
 
-
 //namespace
 using namespace std;
 
@@ -58,11 +57,15 @@ static int selectMat(vector<material> materials, double E) {
 static void walkRandomly(vector<material> materials, int walks) {
 	srand(25);  //seed the random number gen
 	double energy, squiggle;
-	
+	int mat;	
+	event interact;
 	for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
 		energy=1e3;         //start off the neutron at the high energy
 		for(int j=0; energy>=1; j++) { //run while the energy is high enough and keep track of loops
+			mat=selectMat(materials,energy); //find the right material
+			interact=materials[mat].randomWalk(energy); //do the random walk
 			squiggle=rand();
+			energy=0;
 		}
 	}
 }
