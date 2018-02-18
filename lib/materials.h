@@ -63,10 +63,9 @@ class material {
 		double squiggle=getSquiggle();
 	        event output;	
 		//if it was scattered
-		std::cout<<this->alpha<<std::endl;
 		if(squiggle<= (this->getMacroSigS(E)/total) ) {
-			squiggle=rand(); //decide on new energy now
-			E=1/((1-this->alpha)*E); //scatter to a whole new energy!
+			squiggle=getSquiggle(); //decide on new energy now
+			E=E*squiggle/((1-this->alpha)); //scatter to a whole new energy!
 			output= event(E,event::SCATTER);
 				
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
