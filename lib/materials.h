@@ -38,8 +38,8 @@ class material {
 		this->E0=E0;
 		this->GG=GG;
 		this->GN=GN;
-		this->G=vector(int(E0.size()),0);
-		this->r=vector(int(E0.size()),0); //initialize vectors before using them
+		this->G.reserve(E0.size());
+		this->r.reserve(E0.size()); //initialize vectors before using them
 		for(int i=0; i<GG.size(); i++) {
 			this->G[i]=GG[i]+GN[i];
 			this->r[i]=2603911/E0[i]*(this->A+1)/this->A; //calculate r

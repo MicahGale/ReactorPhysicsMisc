@@ -10,7 +10,7 @@
 #include <stdlib.h>   //srand()
 static double getSquiggle(); //declaring the prototype here to allow materials to acces it
 #include "../lib/materials.h" //material object
-
+#include "../lib/Faddeeva.hh"
 
 //namespace
 using namespace std;
