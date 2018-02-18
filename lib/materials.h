@@ -1,4 +1,3 @@
-#include "../lib/resonance.h"
 #include "../lib/event.h"    //event type
 /**
  * Holds the material data for an isotope
@@ -14,6 +13,11 @@ class material {
 	double N;       //number density
 	float alpha;   //cache the alpha term
 	int A;	
+	double r;
+	vector<double> E0; //resonance energies
+	vector<double> GG; //gamma for (n,gamma)
+	vector<double> GN; //gamma for (n,n)
+	vector<double> G;  //gamma total
 	public:
 	/**
 	 *Constructor 
@@ -29,7 +33,16 @@ class material {
 		this->sigPot=sigPot;
 		this->N=N;
 	}
-
+	
+	void initResonance(double r, vector<double> E0, vector<double> GG, vector<double GN) {
+		this->r=r;
+		this->E0=E0;
+		this->GG=GG;
+		this->GN=GN;
+		for(int i=0; i<GG.size(); i++) {
+			this->G[i]=GG[i]+GN[i];
+		}
+	}
 	double getMacroSigP(double E) {
 		return this->sigPot*this->N;
 	}
