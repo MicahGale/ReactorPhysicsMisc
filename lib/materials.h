@@ -13,11 +13,11 @@ class material {
 	double N;       //number density
 	float alpha;   //cache the alpha term
 	int A;	
-	double r;
-	vector<double> E0; //resonance energies
-	vector<double> GG; //gamma for (n,gamma)
-	vector<double> GN; //gamma for (n,n)
-	vector<double> G;  //gamma total
+	std::vector<double> r;
+	std::vector<double> E0; //resonance energies
+	std::vector<double> GG; //gamma for (n,gamma)
+	std::vector<double> GN; //gamma for (n,n)
+	std::vector<double> G;  //gamma total
 	public:
 	/**
 	 *Constructor 
@@ -34,13 +34,13 @@ class material {
 		this->N=N;
 	}
 	
-	void initResonance(double r, vector<double> E0, vector<double> GG, vector<double GN) {
-		this->r=r;
+	void initResonance(std::vector<double> E0, std::vector<double> GG, std::vector<double> GN) {
 		this->E0=E0;
 		this->GG=GG;
 		this->GN=GN;
 		for(int i=0; i<GG.size(); i++) {
 			this->G[i]=GG[i]+GN[i];
+			this->r[i]=2603911/E0[i]*(this->A+1)/this->A; //calculate r
 		}
 	}
 	double getMacroSigP(double E) {

@@ -73,7 +73,6 @@ static int walkRandomly(vector<material> materials, int walks, string filename) 
 			for(int j=1; energy>=1; j++) { //run while the energy is high enough and keep track of number of events
 				mat=selectMat(materials,energy); //find the right material
 				interact=materials[mat].randomWalk(energy); //do the random walk
-				cout<<interact.E<<" "<<interact.type<<endl;
 			
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
@@ -94,16 +93,34 @@ static int walkRandomly(vector<material> materials, int walks, string filename) 
 	}
 }
 /**
-* *********************Main ******************
+* Run question 2 of the pset. The plots need to be made in Matlab or python
 *
 */
 
 int Q2()  {
+	srand(485380);
 	material mod ( "Hydrogen-1", 1, 1.0, 20);
 	vector<material> stuff(1,mod);
-	return walkRandomly(stuff,10,"Q2flux.csv");
+	return walkRandomly(stuff,1000,"Q2flux.csv");
 }
+
+/**
+ * Run Question 3 of the pset.
+ *
+ */
+int Q3() {
+	
+
+}
+/**
+ * *************************Main***********
+ */
 int main()  {
+	//data taken from <http://www.nndc.bnl.gov/sigma/getInterpreted.jsp?evalid=15324&mf=2&mt=151>
+	material uranium ("uranium-238",238,1.0, 11.2934);
+	vector<double> E0 {6.673491, 20.87152,36.68212}; //alll units in eV
+	vector<double> GG {0.02300000, 0.02286379,0.02300225};
+	vector<double> GN {0.001475792, 0.01009376,0.03354568};
 	if( Q2()== -1) 
 		return -1; //run Q2 and die if it fails
 	//calcFaddeeva(1.0);

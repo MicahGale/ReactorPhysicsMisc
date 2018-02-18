@@ -1,3 +1,5 @@
 #!/bin/python3
 
-print( "hello world")
+from scipy import special
+
+print( special.wofz(1))
