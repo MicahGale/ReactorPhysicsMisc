@@ -33,17 +33,17 @@ static double getSquiggle() {
 *@param E the energy of the current neutron
 *@return the index of the material which was randomly chosen
 */
-static int selectMat(vector<material> materials, double E) {
+static int selectMat(vector<material> materials, double E, double T) {
 	double squiggle=getSquiggle();
 	double total = 0;
 	double accum = 0;
 	//find the sum of all of the cross sections
 	for(int i=0; i<materials.size(); i++) {
-		total+=materials[i].getMacroSigT(E);
+		total+=materials[i].getMacroSigT(E,T);
 	}
 	//run through it again with to find which one is right
 	for(int i=0;i<materials.size(); i++) {
-		accum+=materials[i].getMacroSigT(E); //adds this materials fraction of it
+		accum+=materials[i].getMacroSigT(E,T); //adds this materials fraction of it
 		if(squiggle<=accum) {
 			return i; //if the material is the selected one return it 
 		}
@@ -56,7 +56,7 @@ static int selectMat(vector<material> materials, double E) {
  *
  *@Param the materials for the array
  */
-static int walkRandomly(vector<material> materials, int walks, string filename) {
+static int walkRandomly(vector<material> materials, int walks, double T, string filename) {
 	srand(25);  //seed the random number gen
 	double energy, squiggle;
 	int mat;	
@@ -71,8 +71,8 @@ static int walkRandomly(vector<material> materials, int walks, string filename) 
 		for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
 			energy=1e3;         //start off the neutron at the high energy
 			for(int j=1; energy>=1; j++) { //run while the energy is high enough and keep track of number of events
-				mat=selectMat(materials,energy); //find the right material
-				interact=materials[mat].randomWalk(energy); //do the random walk
+				mat=selectMat(materials,energy,T); //find the right material
+				interact=materials[mat].randomWalk(energy,T); //do the random walk
 			
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
@@ -101,7 +101,7 @@ int Q2()  {
 	srand(485380);
 	material mod ( "Hydrogen-1", 1, 1.0, 20);
 	vector<material> stuff(1,mod);
-	return walkRandomly(stuff,1000,"Q2flux.csv");
+	return walkRandomly(stuff,1000,0,"Q2flux.csv");
 }
 
 /**
@@ -121,6 +121,7 @@ int main()  {
 	vector<double> E0 {6.673491, 20.87152,36.68212}; //alll units in eV
 	vector<double> GG {0.02300000, 0.02286379,0.02300225};
 	vector<double> GN {0.001475792, 0.01009376,0.03354568};
+	uranium.initResonance(E0,GG,GN);  //initialize resonance
 	if( Q2()== -1) 
 		return -1; //run Q2 and die if it fails
 	//calcFaddeeva(1.0);
