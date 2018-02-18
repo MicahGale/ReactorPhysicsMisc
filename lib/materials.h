@@ -12,6 +12,7 @@ class material {
 	std::string name;
 	double sigPot; //potential scattering
 	double N;       //number density
+	float alpha;   //cache the alpha term
 	int A;	
 	public:
 	/**
@@ -19,8 +20,12 @@ class material {
 	 *
 	 */	
 	material (std::string name, int A, double N, double sigPot) {
+		int top, bottom;
 		this->name=name;
 		this->A=A;
+		top=A-1;
+		bottom=A+1; //calculation top and bottom terms of alpha
+		this->alpha=top*top/(bottom*bottom);
 		this->sigPot=sigPot;
 		this->N=N;
 	}
@@ -48,9 +53,6 @@ class material {
 	double getMacroSigT(double E) {
                 return this->getMacroSigS(E)+this->getMacroSigA(E);
         }
-	double getAlpha() {
-		return (this->A-1)^2/(this->A+1)^2;
-	}
 	/**
 	 * Performs a random walk 
 	 *@param E- the incoming neutron energy
@@ -58,12 +60,13 @@ class material {
 	 */
 	event randomWalk(double E) {
 		double total= this->getMacroSigT(E); //get the total cross-section
-		double squiggle=rand();
+		double squiggle=getSquiggle();
 	        event output;	
 		//if it was scattered
-		if(squiggle<= this->getMacroSigS(E) ) {
+		std::cout<<this->alpha<<std::endl;
+		if(squiggle<= (this->getMacroSigS(E)/total) ) {
 			squiggle=rand(); //decide on new energy now
-			E=1/((1-this->getAlpha())*E); //scatter to a whole new energy!
+			E=1/((1-this->alpha)*E); //scatter to a whole new energy!
 			output= event(E,event::SCATTER);
 				
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
