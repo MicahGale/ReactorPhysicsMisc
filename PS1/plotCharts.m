@@ -73,10 +73,15 @@ if Q3
    for file=fileNames
        M=csvread(file{1},1,0);
        file{1} %print to the terminal
+       absorb=M(M(:,3)==0,:);
+       length(absorb)/90e3
        a=figure('units','normalized','outerposition',[ 0 0 1 1]);
        hold on;
        histogram(M(:,2),edges);
-        set(gca,'XScale','log');
+       set(gca,'XScale','log');
+       xlabel('energy [eV]');
+       ylabel('flux');
+       title('Flux in an infinite homogenous medium of U-238 and H-1');
        saveas(a,strcat(file{1},".png"),"png");
        hold off;
    end
