@@ -6,3 +6,6 @@
 *.*.stackdump
 *.png
 *.m~
+*.a
+*.o
+Pset1
