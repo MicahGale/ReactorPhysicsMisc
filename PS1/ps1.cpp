@@ -43,7 +43,7 @@ static int selectMat(vector<material> materials, double E, double T) {
 	}
 	//run through it again with to find which one is right
 	for(int i=0;i<materials.size(); i++) {
-		accum+=materials[i].getMacroSigT(E,T); //adds this materials fraction of it
+		accum+=materials[i].getMacroSigT(E,T)/total; //adds this materials fraction of it
 		if(squiggle<=accum) {
 			return i; //if the material is the selected one return it 
 		}
@@ -72,8 +72,7 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 			energy=1e3;         //start off the neutron at the high energy
 			for(int j=1; energy>=1; j++) { //run while the energy is high enough and keep track of number of events
 				mat=selectMat(materials,energy,T); //find the right material
-				interact=materials[mat].randomWalk(energy,T); //do the random walk
-			
+				interact=materials[mat].randomWalk(energy,T); //do the random walk	
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
 
@@ -86,7 +85,7 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 			}
 		}
 		output.close();
-		return 1; //everything went alllright.... maybe
+		return 0; //everything went alllright.... maybe
 	} else {  // if the file can't be opened display an error
 		cout<<"failed to open output file "+filename<<endl;
 	       	return -1; //file failed	
@@ -118,7 +117,7 @@ int Q1(material uranium, double T, string fileName) {
 				<<uranium.getMicroSigS(energy,T)<<endl;
 		}
 		output.close();
-		return 1;
+		return 0;
 	} else { //it died!
 		return -1;
 	}
@@ -139,8 +138,26 @@ int Q2()  {
  * Run Question 3 of the pset.
  *
  */
-int Q3() {
+int Q3(material uranium) {
+	stringstream fileName;
+	material mod ("Hydrogen-1",1,1.0,20);
+	vector<double> N{10,1000,1000000}; //the concentrations to test at
+	vector<material> mats;
+	//array<double>T {0,1000};
+	vector<double> T  {0};
+
+	for (double t:T) {
+		for(double n: N) {
+			mod.updateN(n); //update density
+			mats= {mod,uranium};
+			fileName.str("");
+			fileName<<"Q3Flux_"<<t<<"K_"<<n<<"to1.csv";
+			if( walkRandomly(mats,900000,t,fileName.str())==-1) //fail if stuff went bad
+				return -1;
 	
+		}
+	}
+	return 0;
 
 }
 /**
@@ -156,9 +173,10 @@ int main()  {
 
 	//Q1(uranium,0,"Q1_0K.csv"); //0K case
 	//Q1(uranium,1000,"Q1_1000.csv"); //1KK case
-	if( Q2()== -1) 
-		return -1; //run Q2 and die if it fails
-	//calcFaddeeva(1.0);
+	//if( Q2()== -1) 
+	//	return -1; //run Q2 and die if it fails
+	if(Q3(uranium)==-1)
+		return -1;	
 	return 0;
 
 }

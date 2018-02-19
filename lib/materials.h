@@ -30,12 +30,14 @@ class material {
 	*Boltzmann Constant taken from: <https://en.wikipedia.org/wiki/Boltzmann_constant>
 	*In units of eV/k
 	*/
-	const double BOLTZ_K=8.6173303e-5;
+	static double BOLTZ_K(){return 8.6173303e-5;}
 	/**
 	 *Constructor 
 	 *
 	 */
+	material() {
 
+	}
 	material (std::string name, int A, double N, double sigPot) {
 		int top, bottom;
 		this->name=name;
@@ -62,6 +64,9 @@ class material {
 	}
 	double getMacroSigP(double E, double T) {
 		return this->sigPot*this->N;
+	}
+	double updateN(double N) {
+		this->N=N;
 	}
 	/**
 	 *Calculates the sigma_s with the SLBW.
@@ -146,7 +151,7 @@ class material {
  	       SLBW_squiggle.reserve(E0.size()); //allocate that space
 	       for(int i=0; i<E0.size();i++) {
 		       if(T>1)
-			       SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K*T*E0[i]));
+			       SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i]));
 		       else
 			       SLBW_squiggle[i]=1;
 	       }
