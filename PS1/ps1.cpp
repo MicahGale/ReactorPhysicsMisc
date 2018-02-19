@@ -10,7 +10,6 @@
 #include <stdlib.h>   //srand()
 static double getSquiggle(); //declaring the prototype here to allow materials to acces it
 #include "../lib/materials.h" //material object
-#include "../lib/Faddeeva.hh"
 
 //namespace
 using namespace std;
@@ -144,15 +143,16 @@ int Q3(material uranium) {
 	vector<double> N{10,1000,1000000}; //the concentrations to test at
 	vector<material> mats;
 	//array<double>T {0,1000};
-	vector<double> T  {0};
+	vector<double> T  {0,1000};
 
 	for (double t:T) {
 		for(double n: N) {
 			mod.updateN(n); //update density
+			uranium.set_SLBW_temperature(t); //update temperature
 			mats= {mod,uranium};
 			fileName.str("");
 			fileName<<"Q3Flux_"<<t<<"K_"<<n<<"to1.csv";
-			if( walkRandomly(mats,900000,t,fileName.str())==-1) //fail if stuff went bad
+			if( walkRandomly(mats,90000,t,fileName.str())==-1) //fail if stuff went bad
 				return -1;
 	
 		}
@@ -171,12 +171,12 @@ int main()  {
 	vector<double> GN {0.001475792, 0.01009376,0.03354568};
 	uranium.initResonance(E0,GG,GN);  //initialize resonance
 
-	//Q1(uranium,0,"Q1_0K.csv"); //0K case
-	//Q1(uranium,1000,"Q1_1000.csv"); //1KK case
+	Q1(uranium,0,"Q1_0K.csv"); //0K case
+	Q1(uranium,1000,"Q1_1000.csv"); //1KK case
 	//if( Q2()== -1) 
 	//	return -1; //run Q2 and die if it fails
-	if(Q3(uranium)==-1)
-		return -1;	
+	//if(Q3(uranium)==-1)
+	//	return -1;	
 	return 0;
 
 }

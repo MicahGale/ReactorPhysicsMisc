@@ -1,4 +1,9 @@
 #include <cmath>           //math things like sqrt
+#include <math.h>            //Pi
+
+//Thank you to the MIT Math Department for the Faddeeva implementation
+//<http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package>
+#include "../lib/Faddeeva.hh"
 #include "../lib/event.h"    //event type
 /**
  * Holds the material data for an isotope
@@ -150,9 +155,10 @@ class material {
         double set_SLBW_temperature(double T) {
  	       SLBW_squiggle.reserve(E0.size()); //allocate that space
 	       for(int i=0; i<E0.size();i++) {
-		       if(T>1)
+		       if(T>1) {
 			       SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i]));
-		       else
+		       		std::cout<<SLBW_squiggle[i]<<std::endl;
+		       } else
 			       SLBW_squiggle[i]=1;
 	       }
 	       this->T=T;
@@ -171,7 +177,11 @@ class material {
 			return 1/(1+x*x); //1\(1+x^2)
 		} else {
 			//screw doppler broadening
-			return 0;
+			double squiggle=SLBW_squiggle[resPointer];
+			std::complex<double>in (x*squiggle,squiggle);
+			std::complex<double> out= Faddeeva::w(in);
+			out=out*squiggle;   
+			return sqrt(M_PI)*out.real();
 		}
 	}	
 	double get_SLBW_chi(double E, int resPointer) {
@@ -181,7 +191,11 @@ class material {
 		if(abs(T)<0.01) {  //do the 0k!!!
 			return x/(1+x*x);  //  x/(1+x^2)
 		} else {
-			return 0;
+			double squiggle=SLBW_squiggle[resPointer];
+			std::complex<double> in (x*squiggle, squiggle);
+			std::complex<double> out=Faddeeva::w(in);
+			out=squiggle*out;
+			return sqrt(M_PI)*out.imag();
 		}
 	}
 };
