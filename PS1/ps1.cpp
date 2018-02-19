@@ -93,10 +93,41 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 	}
 }
 /**
+ *Runs Q1. Making SLBW resonance graphs
+ *
+ */
+int Q1(material uranium, double T, string fileName) {
+	ofstream output;
+	double lower, upper, range,stepSize, energy;
+	int steps;
+
+	steps=1000;
+	upper=100;
+	lower=0.1;
+	range=upper-lower;	
+	stepSize=range/steps; //set the step length
+	//first init the resonance temperatures
+	uranium.set_SLBW_temperature(T);
+	output=ofstream (fileName, ios::trunc); //open the stream
+
+	if(output.is_open()) {
+		output<<"energy,sig_a,sig_s"<<endl; //write the headers
+
+		for(energy=lower;energy<=upper;energy+=stepSize) {
+			output<<energy<<","<<uranium.getMicroSigA(energy,T)<<","
+				<<uranium.getMicroSigS(energy,T)<<endl;
+		}
+		output.close();
+		return 1;
+	} else { //it died!
+		return -1;
+	}
+
+}
+/**
 * Run question 2 of the pset. The plots need to be made in Matlab or python
 *
 */
-
 int Q2()  {
 	srand(485380);
 	material mod ( "Hydrogen-1", 1, 1.0, 20);
@@ -122,6 +153,9 @@ int main()  {
 	vector<double> GG {0.02300000, 0.02286379,0.02300225};
 	vector<double> GN {0.001475792, 0.01009376,0.03354568};
 	uranium.initResonance(E0,GG,GN);  //initialize resonance
+
+	Q1(uranium,0,"Q1_0K.csv"); //0K case
+	//Q1(uranium,1000,"Q1_1000.csv"); //1KK case
 	if( Q2()== -1) 
 		return -1; //run Q2 and die if it fails
 	//calcFaddeeva(1.0);

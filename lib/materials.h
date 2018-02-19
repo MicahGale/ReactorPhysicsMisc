@@ -55,9 +55,9 @@ class material {
 		this->r.reserve(E0.size()); //initialize vectors before using them
 		this->q.reserve(E0.size());
 		for(int i=0; i<GG.size(); i++) {
-			this->G[i]=GG[i]+GN[i];
-			this->r[i]=2603911/E0[i]*(this->A+1)/this->A; //calculate r
-			this->q[i]=2*sqrt(r[i]*sigPot);     //2sqrt(r*sig_pot)
+			this->G.push_back(GG[i]+GN[i]);
+			this->r.push_back(2603911/E0[i]*(this->A+1)/this->A); //calculate r
+			this->q.push_back(2*sqrt(r[i]*sigPot));     //2sqrt(r*sig_pot)
 		}
 	}
 	double getMacroSigP(double E, double T) {
@@ -138,25 +138,27 @@ class material {
 		return output;	
 	}
 	//################################SLBW Section#################################
+        /**
+	 *prepares squiggle for doppler broadening
+	 *  
+	 */
+        double set_SLBW_temperature(double T) {
+ 	       SLBW_squiggle.reserve(E0.size()); //allocate that space
+	       for(int i=0; i<E0.size();i++) {
+		       if(T>1)
+			       SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K*T*E0[i]));
+		       else
+			       SLBW_squiggle[i]=1;
+	       }
+	       this->T=T;
+	}
+
 	private:
 	double get_SLBW_x(double E, int resPointer) {
 		if(resPointer>E0.size()-1) //if out of bounds have none of that
 			return 0;
 		return 2*(E-E0[resPointer])/G[resPointer];  //2(E-E0)/Gamma
-	}
-	/**
-	*prepares squiggle for doppler broadening
-	*/
-	double get_SLBW_temperature(double T) {
-		SLBW_squiggle.reserve(E0.size()); //allocate that space
-		for(int i=0; i<E0.size();i++) {
-			if(T>1) 
-				SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K*T*E0[i]));
-			else
-				SLBW_squiggle[i]=1;
-		}
-		this->T=T;	
-	}  
+	} 
 	double get_SLBW_phi(double E, int resPointer) {
 		double x;
 		x=this->get_SLBW_x(E,resPointer);
@@ -166,8 +168,7 @@ class material {
 			//screw doppler broadening
 			return 0;
 		}
-	}
-	
+	}	
 	double get_SLBW_chi(double E, int resPointer) {
 		double x;
 		x=this->get_SLBW_x(E, resPointer);
