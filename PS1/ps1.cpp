@@ -180,25 +180,3 @@ int main()  {
 	return 0;
 
 }
-
-static double calcFaddeeva(double z) {
-	array<char, 128> buffer;
-	string result;
-	//convert input into string
-	ostringstream strs;
-	strs << z;
-	string Zstr =  strs.str();
-
-	string cmd = "python3 feddeeva.py "+Zstr;
-	
-	// runs command
-/*	shared_ptr<FILE> pipe(popen(cmd.c_str(), "r"), pclose);
-	if(!pipe)
-		throw runtime_error("popen() failed!");
-	
-	//continuously read the stdout
-	while(!feof(pipe.get())) {
-		if (fgets(buffer.data(), 128, pipe.get()) !=nullptr)
-			result += buffer.data();
-	}*/
-}
