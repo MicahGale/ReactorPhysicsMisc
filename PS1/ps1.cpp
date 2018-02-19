@@ -132,7 +132,7 @@ int Q2()  {
 	srand(485380);
 	material mod ( "Hydrogen-1", 1, 1.0, 20);
 	vector<material> stuff(1,mod);
-	return walkRandomly(stuff,1000,0,"Q2flux.csv");
+	return walkRandomly(stuff,1000000,0,"Q2flux.csv");
 }
 
 /**
@@ -154,7 +154,7 @@ int main()  {
 	vector<double> GN {0.001475792, 0.01009376,0.03354568};
 	uranium.initResonance(E0,GG,GN);  //initialize resonance
 
-	Q1(uranium,0,"Q1_0K.csv"); //0K case
+	//Q1(uranium,0,"Q1_0K.csv"); //0K case
 	//Q1(uranium,1000,"Q1_1000.csv"); //1KK case
 	if( Q2()== -1) 
 		return -1; //run Q2 and die if it fails
