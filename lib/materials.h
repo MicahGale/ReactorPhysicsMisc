@@ -78,7 +78,7 @@ class material {
 		for(int i=0; i<E0.size(); i++) {
 			phi=this->get_SLBW_phi(E,i);
 			chi=this->get_SLBW_chi(E,i);
-			gammaTerm=GN[i]*GN[i]/G[i]*G[i];
+			gammaTerm=GN[i]*GN[i]/(G[i]*G[i]);
 			sum+=gammaTerm*(r[i]*phi+G[i]/GN[i]*q[i]*chi);
 			//calculates the SLBW resonance
 		}

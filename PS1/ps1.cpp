@@ -101,7 +101,7 @@ int Q1(material uranium, double T, string fileName) {
 	double lower, upper, range,stepSize, energy;
 	int steps;
 
-	steps=1000;
+	steps=5000;
 	upper=100;
 	lower=0.1;
 	range=upper-lower;	
