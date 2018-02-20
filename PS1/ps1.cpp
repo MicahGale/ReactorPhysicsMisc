@@ -170,10 +170,10 @@ int main()  {
 	vector<double> GN {0.001475792, 0.01009376,0.03354568};
 	uranium.initResonance(E0,GG,GN);  //initialize resonance
 
-	//Q1(uranium,0,"Q1_0K.csv"); //0K case
-	//Q1(uranium,1000,"Q1_1000.csv"); //1KK case
-	//if( Q2()== -1) 
-	//	return -1; //run Q2 and die if it fails
+       Q1(uranium,0,"Q1_0K.csv"); //0K case
+ 	Q1(uranium,1000,"Q1_1000.csv"); //1KK case
+	if( Q2()== -1) 
+		return -1; //run Q2 and die if it fails
 	if(Q3(uranium)==-1)
 		return -1;	
 	return 0;

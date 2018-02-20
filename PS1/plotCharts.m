@@ -5,8 +5,8 @@
 
 clear;
 close all;
-Q1=false;
-Q2=false;
+Q1=true;
+Q2=true;
 Q3=true;
 
 if Q1
