@@ -5,9 +5,9 @@
 
 clear;
 close all;
-Q1=true;
+Q1=false;
 Q2=false;
-Q3=false;
+Q3=true;
 
 if Q1
     filenames={"Q1_0K.csv","Q1_1000.csv"};
@@ -68,7 +68,8 @@ if Q2
 end
 
 if Q3
-   fileNames={'Q3Flux_0K_10to1.csv','Q3Flux_0K_1000to1.csv','Q3Flux_0K_1e+06to1.csv'}; 
+   fileNames={'Q3Flux_0K_10to1.csv','Q3Flux_0K_1000to1.csv','Q3Flux_0K_1e+06to1.csv'...c
+       'Q3Flux_1000K_10to1.csv','Q3Flux_1000K_1000to1.csv','Q3Flux_1000K_1e+06to1.csv'}; 
     upper=1e3;
     lower=1;
     bins=100;

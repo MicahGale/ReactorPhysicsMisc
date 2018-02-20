@@ -156,10 +156,9 @@ class material {
  	       SLBW_squiggle.reserve(E0.size()); //allocate that space
 	       for(int i=0; i<E0.size();i++) {
 		       if(T>1) {
-			       SLBW_squiggle[i]=G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i]));
-		       		std::cout<<SLBW_squiggle[i]<<std::endl;
+			       SLBW_squiggle.push_back(G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i])));
 		       } else
-			       SLBW_squiggle[i]=1;
+			       SLBW_squiggle.push_back(1);
 	       }
 	       this->T=T;
 	}
@@ -177,17 +176,19 @@ class material {
 			return 1/(1+x*x); //1\(1+x^2)
 		} else {
 			//screw doppler broadening
-			double squiggle=SLBW_squiggle[resPointer];
-			std::complex<double>in (x*squiggle,squiggle);
+			double squiggle=this->SLBW_squiggle[resPointer];
+			std::complex<double>in;
+			in.real(x*squiggle);
+			in.imag(squiggle);
 			std::complex<double> out= Faddeeva::w(in);
-			out=out*squiggle;   
+				out=out*squiggle;   
 			return sqrt(M_PI)*out.real();
 		}
 	}	
 	double get_SLBW_chi(double E, int resPointer) {
 		double x;
 		x=this->get_SLBW_x(E, resPointer);
-		
+	
 		if(abs(T)<0.01) {  //do the 0k!!!
 			return x/(1+x*x);  //  x/(1+x^2)
 		} else {
