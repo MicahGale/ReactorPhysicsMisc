@@ -25,6 +25,12 @@ static double getSquiggle() {
 	double squiggle=(rand()/((double)(RAND_MAX)+1));
 	return squiggle;
 }
+static double getMacroMacroSigT(vector<material> mats, double E, double T) {
+	double sum =0;
+	for(material mat: mats) {
+		sum+=mat.getMacroSigT(E,T);
+	}
+}
 /**
 *based on cross-sections decide which material to scatter off of
 *
@@ -37,9 +43,7 @@ static int selectMat(vector<material> materials, double E, double T) {
 	double total = 0;
 	double accum = 0;
 	//find the sum of all of the cross sections
-	for(int i=0; i<materials.size(); i++) {
-		total+=materials[i].getMacroSigT(E,T);
-	}
+	total=getMacroMacroSigT(materials, E,T); 
 	//run through it again with to find which one is right
 	for(int i=0;i<materials.size(); i++) {
 		accum+=materials[i].getMacroSigT(E,T)/total; //adds this materials fraction of it
@@ -65,7 +69,7 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 	output.open(filename,ios::trunc); //opens the file and overwite old
 
 	if(output.is_open()) {
-			output<<"event number, energy (eV), scatter"<<endl;  //write the header of the file
+			output<<"event number, energy (eV), scatter,SigT(),Chi,Phi,sigP"<<endl;  //write the header of the file
 
 		for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
 			energy=1e3;         //start off the neutron at the high energy
@@ -75,7 +79,8 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
 
-					output<<j<<","<<energy<<","<<"1"<<endl;     //write the scatter event
+					output<<j<<","<<energy<<","<<"1"<<","<<gitMacroMacroSigT(materials,energy,T)<<","
+						materials[mat].get_SLBW_chi(E,T)<<","<<materials[mat].get_SLBW_phi(E,T)<<","<<materials[mat].getMicroSigP(E,T)<<endl;     //write the scatter event
 				} else  { //assume absorption TODO fission here 
 					energy=0; //tell it to kill this walk
 
