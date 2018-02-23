@@ -6,8 +6,8 @@
 clear;
 close all;
 Q1=false;
-Q2=true;
-Q3=false;
+Q2=false;
+Q3=true;
 
 if Q1
     filenames={"Q1_0K.csv","Q1_1000.csv"};
@@ -34,7 +34,7 @@ if Q2
     hold on;
     %equal energy bins
     edges=1:10:1e3; %makes 100 equal bins
-    a=getFluxData(M,edges,false,false);
+    a=getFluxData(M,edges,false);
     xlabel('Energy in equal bins [eV]');
     ylabel('Flux');
     title('Thermalization of a 1KeV source in a pure scattering medium');
@@ -46,7 +46,7 @@ if Q2
     
     %equal lethergy bins
     edges=formLogBounds(lower,upper,bins);
-    a=getFluxData(M,edges,false,false);
+    a=getFluxData(M,edges,false);
     xlabel('Energy in equal lethergy bins [eV]');
     ylabel('Flux');
     title('Thermalization of a 1KeV source in a pure scattering medium');
@@ -76,14 +76,14 @@ if Q3
        'Q3Flux_1000K_10to1.csv','Q3Flux_1000K_1000to1.csv','Q3Flux_1000K_1e+06to1.csv'}; 
     upper=1e3;
     lower=1;
-    bins=100;
+    bins=200;
     edges=formLogBounds(lower,upper,bins);
    for file=fileNames
        M=csvread(file{1},1,0);
        file{1} %print to the terminal
        absorb=M(M(:,3)==0,:);
-       length(absorb)/90e3
-       a=getFluxData(M,edges,false,false);
+       length(absorb)/9e6         %print absorption rate
+       a=getFluxData(M,edges,false);
        set(gca,'XScale','log');
        xlabel('energy [eV]');
        ylabel('flux');
@@ -91,4 +91,13 @@ if Q3
        saveas(a,strcat(file{1},".png"),"png");
        hold off;
    end
+   
+   %Q3C
+   M=csvread('Q3Flux_1000K_1000to1.csv',1,0);
+   a=getFluxData(M,eges,true);
+   xlabel('energy [eV]');
+   ylabel('Flux weighted by scattering componenets');
+   Title('The flux of slowing neutrons weighted by resonant scattering component');
+   saveas(a,'Q3Cscatter.png','png');
+   
 end
