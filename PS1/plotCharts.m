@@ -94,7 +94,7 @@ if Q3
    
    %Q3C
    M=csvread('Q3Flux_1000K_1000to1.csv',1,0);
-   a=getFluxData(M,eges,true);
+   a=getFluxData(M,edges,true);
    xlabel('energy [eV]');
    ylabel('Flux weighted by scattering componenets');
    Title('The flux of slowing neutrons weighted by resonant scattering component');

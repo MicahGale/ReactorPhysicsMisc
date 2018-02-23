@@ -159,6 +159,10 @@ int Q3(material uranium) {
 			mats= {mod,uranium};
 			fileName.str("");
 			fileName<<"Q3Flux_"<<t<<"K_"<<n<<"to1.csv";
+/*
+ * Travis update this line with the number of histories to run. I suggest it
+ * if you don't want to spend all night running the code.
+ */
 			if( walkRandomly(mats,9000000,t,fileName.str())==-1) //fail if stuff went bad
 				return -1;
 	
