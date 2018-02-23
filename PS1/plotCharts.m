@@ -97,7 +97,9 @@ if Q3
    a=getFluxData(M,edges,true);
    xlabel('energy [eV]');
    ylabel('Flux weighted by scattering componenets');
-   Title('The flux of slowing neutrons weighted by resonant scattering component');
+   title('The flux of slowing neutrons weighted by resonant scattering component');
+   set(gca,'Xscale','log');
+   set(gca,'Yscale','log');
    saveas(a,'Q3Cscatter.png','png');
    
 end
