@@ -5,9 +5,9 @@
 
 clear;
 close all;
-Q1=true;
+Q1=false;
 Q2=true;
-Q3=true;
+Q3=false;
 
 if Q1
     filenames={"Q1_0K.csv","Q1_1000.csv"};
@@ -32,7 +32,9 @@ if Q2
     M=csvread("Q2flux.csv",1,0);
     figure('units','normalized','outerposition',[0 0 1 1]);
     hold on;
-    a=histogram(M(:,2));
+    %equal energy bins
+    edges=1:10:1e3; %makes 100 equal bins
+    a=getFluxData(M,edges,false,false);
     xlabel('Energy in equal bins [eV]');
     ylabel('Flux');
     title('Thermalization of a 1KeV source in a pure scattering medium');
@@ -40,30 +42,32 @@ if Q2
     hold off;
     upper=1e3;
     lower=1;
-    bins=50;
+    bins=200;
+    
+    %equal lethergy bins
     edges=formLogBounds(lower,upper,bins);
-    figure('units','normalized','outerposition',[0 0 1 1]);
-    hold on;
-    b=histogram(M(:,2),formLogBounds(lower,upper,bins));
+    a=getFluxData(M,edges,false,false);
     xlabel('Energy in equal lethergy bins [eV]');
     ylabel('Flux');
     title('Thermalization of a 1KeV source in a pure scattering medium');
-    saveas(b,"Q2FluxLethergy.png","png");
-      first=M(M(:,1)==1,:); 
-      second=M(M(:,1)==2,:);
-      third=M(M(:,1)==3,:); %the first second and third collisions
-      c=figure('units','normalized','outerposition',[0 0 1 1]);
-      hold on;
-      histogram(first);
-      histogram(second);
-      histogram(third);
-      h = findobj(gca,'Type','patch');
-      set(h,'facealpha',0.5);
-      set(gca, 'YScale', 'log');
-      xlabel('energy [eV]');
-      ylabel('flux');
-      legend('first collision','second collison','third collison');
-      saveas(c,"Q2FirstCollide.png","png");
+    saveas(a,"Q2FluxLethergy.png","png");
+    
+    %first second third collisons
+    first=M(M(:,1)==1,:); 
+    second=M(M(:,1)==2,:);
+    third=M(M(:,1)==3,:); %the first second and third collisions
+    c=figure('units','normalized','outerposition',[0 0 1 1]);
+    hold on;
+    histogram(first);
+    histogram(second);
+    histogram(third);
+    h = findobj(gca,'Type','patch');
+    set(h,'facealpha',0.5);
+    set(gca, 'YScale', 'log');
+    xlabel('energy [eV]');
+    ylabel('flux');
+    legend('first collision','second collison','third collison');
+    saveas(c,"Q2FirstCollide.png","png");
 
 end
 
@@ -79,9 +83,7 @@ if Q3
        file{1} %print to the terminal
        absorb=M(M(:,3)==0,:);
        length(absorb)/90e3
-       a=figure('units','normalized','outerposition',[ 0 0 1 1]);
-       hold on;
-       histogram(M(:,2),edges);
+       a=getFluxData(M,edges,false,false);
        set(gca,'XScale','log');
        xlabel('energy [eV]');
        ylabel('flux');
