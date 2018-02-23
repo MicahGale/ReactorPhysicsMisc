@@ -14,9 +14,6 @@ static double getSquiggle(); //declaring the prototype here to allow materials t
 //namespace
 using namespace std;
 
-//function prototypes
-static double calcFaddeeva(double z);
-
 /**
 *Returns a double between 0 and 1
 *which is uniformally distributed along the range.
