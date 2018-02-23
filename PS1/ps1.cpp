@@ -79,8 +79,12 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
 
-					output<<j<<","<<energy<<","<<"1"<<","<<gitMacroMacroSigT(materials,energy,T)<<","
-						materials[mat].get_SLBW_chi(E,T)<<","<<materials[mat].get_SLBW_phi(E,T)<<","<<materials[mat].getMicroSigP(E,T)<<endl;     //write the scatter event
+					output<<j<<","<<energy<<","<<"1"<<",";
+					output<<getMacroMacroSigT(materials,energy,T);
+					output<<","<<materials[mat].get_micro_chi(energy)<<",";
+					output<<materials[mat].get_micro_phi(energy)<<",";
+					output<<materials[mat].getMicroSigP(energy, T)<<endl;     
+					//write the scatter event
 				} else  { //assume absorption TODO fission here 
 					energy=0; //tell it to kill this walk
 

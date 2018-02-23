@@ -70,6 +70,9 @@ class material {
 	double getMacroSigP(double E, double T) {
 		return this->sigPot*this->N;
 	}
+	double getMicroSigP(double E, double T) {
+		return this->sigPot;
+	}
 	double updateN(double N) {
 		this->N=N;
 	}
@@ -163,7 +166,7 @@ class material {
 	       this->T=T;
 	}
 
-	private:
+	
 	double get_SLBW_x(double E, int resPointer) {
 		if(resPointer>E0.size()-1) //if out of bounds have none of that
 			return 0;
@@ -198,5 +201,21 @@ class material {
 			out=squiggle*out;
 			return sqrt(M_PI)*out.imag();
 		}
+	}
+	double get_micro_chi(double E) {
+		double sum=0;
+
+		for(int i=0;i<E0.size();i++) {
+			sum+=get_SLBW_chi(E,i);
+		}
+		return sum;
+	}
+	double get_micro_phi(double E) {
+		double sum=0;
+
+		for(int i=0; i<E0.size();i++) {
+			sum+= get_SLBW_phi(E,i);
+		}
+		return sum;
 	}
 };
