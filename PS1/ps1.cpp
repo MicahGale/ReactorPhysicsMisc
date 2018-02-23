@@ -73,9 +73,11 @@ static int walkRandomly(vector<material> materials, int walks, double T, string 
 
 		for(int i=0;i<walks; i++) {   //iterates over all the walks!!!
 			energy=1e3;         //start off the neutron at the high energy
+			if (i%5000 ==0)
+				cout<<i<<endl;
 			for(int j=1; energy>=1; j++) { //run while the energy is high enough and keep track of number of events
 				mat=selectMat(materials,energy,T); //find the right material
-				interact=materials[mat].randomWalk(energy,T); //do the random walk	
+				interact=materials[mat].randomWalk(energy,T); //do the random walk
 				if(interact.type==event::SCATTER) {
 					energy=interact.E;   //update the energy
 
@@ -160,7 +162,7 @@ int Q3(material uranium) {
 			mats= {mod,uranium};
 			fileName.str("");
 			fileName<<"Q3Flux_"<<t<<"K_"<<n<<"to1.csv";
-			if( walkRandomly(mats,90000,t,fileName.str())==-1) //fail if stuff went bad
+			if( walkRandomly(mats,9000000,t,fileName.str())==-1) //fail if stuff went bad
 				return -1;
 	
 		}
