@@ -16,5 +16,8 @@ function a=plotluxData(M, edges,chi,phi)
             end
         end
     end
-    a=plot(energy,outPut);
+    a=figure('units','normalized','outerposition',[0 0 1 1]);
+    hold on;
+    plot(energy,outPut);
+    ylim([0 inf]);
 end
