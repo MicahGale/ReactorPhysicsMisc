@@ -43,7 +43,7 @@ class material {
 	material() {
 
 	}
-	material (std::string name, int A, double N, double sigPot) {
+	material (std::string name, int A, double N, double sigPot, std::vector<double> E0, std::vector<double> GG, std::vector<double> GN, double T) {
 		int top, bottom;
 		this->name=name;
 		this->A=A;
@@ -52,9 +52,6 @@ class material {
 		this->alpha=top*top/(bottom*bottom);
 		this->sigPot=sigPot;
 		this->N=N;
-	}
-	
-	void initResonance(std::vector<double> E0, std::vector<double> GG, std::vector<double> GN) {
 		this->E0=E0;
 		this->GG=GG;
 		this->GN=GN;
@@ -66,16 +63,24 @@ class material {
 			this->r.push_back(2603911/E0[i]*(this->A+1)/this->A); //calculate r
 			this->q.push_back(2*sqrt(r[i]*sigPot));     //2sqrt(r*sig_pot)
 		}
+
+		//Begin the doppler Broadening
+               SLBW_squiggle.reserve(E0.size()); //allocate that space
+               for(int i=0; i<E0.size();i++) {
+                       if(T>1) {
+                               SLBW_squiggle.push_back(G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i])));
+                       } else
+                               SLBW_squiggle.push_back(1);
+               }
+               this->T=T;
 	}
-	double getMacroSigP(double E, double T) {
+	double getMacroSigP(double E) {
 		return this->sigPot*this->N;
 	}
-	double getMicroSigP(double E, double T) {
+	double getMicroSigP(double E) {
 		return this->sigPot;
 	}
-	double updateN(double N) {
-		this->N=N;
-	}
+	
 	/**
 	 *Calculates the sigma_s with the SLBW.
 	 * excludes the potential term.
@@ -84,7 +89,7 @@ class material {
 	 * @param T the temperature to evaluate
 	 * @return the resonant contribution to sigma_s in barns
 	 */
-	double getMicroSigSRes(double E, double T) {
+	double getMicroSigSRes(double E) {
 		double sum=0;
 		double gammaTerm, phi,chi;
 
@@ -97,17 +102,16 @@ class material {
 		}
 		return sum;
 	}
-	double getMicroSigS(double E, double T) {
-		return this->getMicroSigSRes(E,T)+sigPot;
+	double getMicroSigS(double E) {
+		return this->getMicroSigSRes(E)+sigPot;
 	}
        /**
 	*Calculates the absorption cross-section using SLBW.
 	*
 	*@param E energy
-	*@param T temperature
 	*@return the full absorption cross-section
 	*/	
-	double getMicroSigA(double E, double T) {
+	double getMicroSigA(double E) {
 		double sum=0; //the sum of all resonances
 		double gammaTerm, phi;
 		for(int i=0; i<E0.size();i++) {
@@ -118,29 +122,29 @@ class material {
 		return sum;
 	}
 
-	double getMacroSigS(double E, double T) {
-                return this->getMacroSigP(E,T)+
-                        this->N*this->getMicroSigSRes(E,T);
+	double getMacroSigS(double E) {
+                return this->getMacroSigP(E)+
+                        this->N*this->getMicroSigSRes(E);
         }
 
-	double getMacroSigA(double E, double T) {
-                return this->N*this->getMicroSigA(E, T);
+	double getMacroSigA(double E) {
+                return this->N*this->getMicroSigA(E);
         }
 
-	double getMacroSigT(double E, double T) {
-                return this->getMacroSigS(E, T)+this->getMacroSigA(E, T);
+	double getMacroSigT(double E) {
+                return this->getMacroSigS(E)+this->getMacroSigA(E);
         }
 	/**
 	 * Performs a random walk 
 	 *@param E- the incoming neutron energy
 	 *@return an event with the energy and event type
 	 */
-	event randomWalk(double E, double T) {
-		double total= this->getMacroSigT(E,T); //get the total cross-section
+	event randomWalk(double E) {
+		double total= this->getMacroSigT(E); //get the total cross-section
 		double squiggle=getSquiggle();
 	        event output;	
 		//if it was scattered
-		if(squiggle<= (this->getMacroSigS(E,T)/total) ) {
+		if(squiggle<= (this->getMacroSigS(E)/total) ) {
 			squiggle=getSquiggle(); //decide on new energy now
 			E=E*squiggle/((1-this->alpha)); //scatter to a whole new energy!
 			output= event(E,event::SCATTER);
@@ -155,16 +159,6 @@ class material {
 	 *prepares squiggle for doppler broadening
 	 *  
 	 */
-        double set_SLBW_temperature(double T) {
- 	       SLBW_squiggle.reserve(E0.size()); //allocate that space
-	       for(int i=0; i<E0.size();i++) {
-		       if(T>1) {
-			       SLBW_squiggle.push_back(G[i]*sqrt(A/(4*BOLTZ_K()*T*E0[i])));
-		       } else
-			       SLBW_squiggle.push_back(1);
-	       }
-	       this->T=T;
-	}
 
 	
 	double get_SLBW_x(double E, int resPointer) {
