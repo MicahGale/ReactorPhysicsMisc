@@ -144,8 +144,11 @@ class cell {
 				if(x<dis) {
 					mat= selectMat(E);
 					finish=materials[mat].randomWalk(startIntern); //do the monte Carlo
-					if(finish.getType()==event::ABSORB) //if the neutron died
+					if(finish.getType()==event::ABSORB||
+							finish.getType()==event::LEAK){ 
+						//if the neutron died
 						inCell=false;
+					}
 					this->doTallies(finish,pnt);
 					startIntern=finish; //update for next round
 					pnt=startIntern.getPoint();		

@@ -1,4 +1,4 @@
-
+//All units are in cm for distance
  class surface {
 	public:
 		virtual vec findIntercept(const event& start)=0;
@@ -8,15 +8,13 @@
 class xPlane: public surface {
 	private:
 		double x;
-		bool side; //false is negative side, true positive side
-
 	public:
 		/**
 		 *Creates an YZ-plane at x.
 		 *
 		 *@param x the x-intercept
 		 */
-		xPlane(double x, bool side) {
+		xPlane(double x) {
 			this->x=x;
 		}
 		/**
