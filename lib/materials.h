@@ -16,6 +16,7 @@ class material {
 
 	std::string name;
 	double sigPot; //potential scattering
+	double flatSigA; //constant absorption cross-section. Used for discrete energy groups
 	double N;       //number density
 	float alpha;   //cache the alpha term
 	int A;
@@ -43,7 +44,9 @@ class material {
 	material() {
 
 	}
-	material (std::string name, int A, double N, double sigPot, std::vector<double> E0, std::vector<double> GG, std::vector<double> GN, double T) {
+	material (std::string name, int A, double N, double sigPot, double, double flatSigA, 
+			std::vector<double> E0, std::vector<double> GG, 
+			std::vector<double> GN, double T) {
 		int top, bottom;
 		this->name=name;
 		this->A=A;
@@ -55,6 +58,7 @@ class material {
 		this->E0=E0;
 		this->GG=GG;
 		this->GN=GN;
+		this->flatSigA=flatSigA;
 		this->G.reserve(E0.size());
 		this->r.reserve(E0.size()); //initialize vectors before using them
 		this->q.reserve(E0.size());
@@ -112,7 +116,7 @@ class material {
 	*@return the full absorption cross-section
 	*/	
 	double getMicroSigA(double E) {
-		double sum=0; //the sum of all resonances
+		double sum=flatSigA; //the sum of all resonances
 		double gammaTerm, phi;
 		for(int i=0; i<E0.size();i++) {
 			phi=this->get_SLBW_phi(E,i);
@@ -136,21 +140,32 @@ class material {
         }
 	/**
 	 * Performs a random walk 
-	 *@param E- the incoming neutron energy
+	 *@param start- the incoming neutron history
 	 *@return an event with the energy and event type
 	 */
-	event randomWalk(double E) {
-		double total= this->getMacroSigT(E); //get the total cross-section
-		double squiggle=getSquiggle();
-	        event output;	
+	event randomWalk(const event& start) {
+		double total, squiggle, mu,mu_cm, phi,E;
+		vec dir;
+		event output;
+
+		E=start.getE();
+		total= this->getMacroSigT(E); //get the total cross-section
+		squiggle=getSquiggle();
+	        dir=start.getDir();	
 		//if it was scattered
 		if(squiggle<= (this->getMacroSigS(E)/total) ) {
-			squiggle=getSquiggle(); //decide on new energy now
-			E=E*squiggle/((1-this->alpha)); //scatter to a whole new energy!
-			output= event(E,event::SCATTER);
+			mu=2*getSquiggle()-1; //decide on new polar angle
+			phi=2*M_PI*getSquiggle(); //decide new azimuth angle
+			dir=dir.rotate(mu,phi);
+
+			//calculate scatter E
+			//Solved with: <https://www.wolframalpha.com/input/?i=solve+u%3D(1%2BA*v)%2F(sqrt(A%5E2%2B2*A*v%2B1))+for+v>
+			//mu_cum=(std::pow(A*A*A*A*mu*mu+A*A*mu*mu*mu*mu-A*A*mu*mu,0.5)+A*mu*mu-A)/(A*A);
+			//E=E*squiggle/((1-this->alpha)); //scatter to a whole new energy!
+			output= event(E,event::SCATTER,start.getPoint(),dir);
 				
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
-			output=event(0, event::ABSORB);
+			output=event(0, event::ABSORB,start.getPoint(),dir);
 		}
 		return output;	
 	}
