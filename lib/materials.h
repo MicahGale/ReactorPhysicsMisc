@@ -20,6 +20,7 @@ class material {
 	double N;       //number density
 	float alpha;   //cache the alpha term
 	int A;
+	bool vac;   //if a vacuum
 	//resonance data	
 	std::vector<double> E0; //resonance energies
 	std::vector<double> GG; //gamma for (n,gamma)
@@ -38,11 +39,16 @@ class material {
 	*/
 	static double BOLTZ_K(){return 8.6173303e-5;}
 	/**
-	 *Constructor 
+	 *Constructs a vacuum material
 	 *
 	 */
 	material() {
-
+		this->vac=true;
+		this->sigPot=0;
+		this->flatSigA=0;
+		this->N=0;
+		this->alpha=0;
+		A=0;                  
 	}
 	material (std::string name, int A, double N, double sigPot, double, double flatSigA, 
 			std::vector<double> E0, std::vector<double> GG, 
@@ -59,6 +65,7 @@ class material {
 		this->GG=GG;
 		this->GN=GN;
 		this->flatSigA=flatSigA;
+		this->vac=false;
 		this->G.reserve(E0.size());
 		this->r.reserve(E0.size()); //initialize vectors before using them
 		this->q.reserve(E0.size());
@@ -151,7 +158,10 @@ class material {
 		E=start.getE();
 		total= this->getMacroSigT(E); //get the total cross-section
 		squiggle=getSquiggle();
-	        dir=start.getDir();	
+	        dir=start.getDir();
+		if(vac) {
+			return event(E,event::LEAK,start.getPoint(),dir); //leak the neutron and die
+		}	
 		//if it was scattered
 		if(squiggle<= (this->getMacroSigS(E)/total) ) {
 			mu=2*getSquiggle()-1; //decide on new polar angle

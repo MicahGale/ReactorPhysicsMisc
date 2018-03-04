@@ -9,6 +9,7 @@ class event {
 		static const short int SCATTER=0xe7; //the constant for a scatter event
 		static const short int ABSORB=0xff;  //the constant for an absorption event
 		static const short int NO_EVENT=0x54; //the constant for leaving a cell
+		static const short int LEAK=0xf7;     //the neutron leaked out 
 		event() {
 			this->E=0;
 			this->type=0x00;
