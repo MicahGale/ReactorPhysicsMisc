@@ -2,7 +2,8 @@
  class surface {
 	public:
 		virtual vec findIntercept(const event& start)=0;
-		virtual bool findSide(vec point)=0;
+		virtual bool findSide(const vec point)=0;
+		virtual void helloWorld()=0;
 };
 
 class xPlane: public surface {
@@ -43,9 +44,13 @@ class xPlane: public surface {
 		 * @return false- on the negative infinity side. True- Positive infinity side
 		 *
 		 */
-		bool findSide(vec point) {
-			double xEval=point.get(0); //get the x point
-			return xEval>x;
+		bool findSide(const vec point) {
+			//double xEval=point.get(0); //get the x point
+			//return xEval>x;
+			return true;
+		}
+		void helloWorld() {
+
 		}
 
 };

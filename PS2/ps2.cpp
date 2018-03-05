@@ -54,10 +54,10 @@ static universe worldBuild() {
 	isoXLineSrc src(-2,0,20);
 	source* nSrc= &src;
 
-	cells.push_back(cell(cell1surf,std::vector<bool>(false,true),mat1,tallies));
-	cells.push_back(cell(cell2surf,std::vector<bool>(true, false),mat2,tallies));
-	cells.push_back(cell(cell3surf,std::vector<bool>(false),vacuum,tallies));
-	cells.push_back(cell(cell4surf,std::vector<bool>(true),vacuum, tallies));
+	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies));
+	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies));
+	cells.push_back(cell(cell3surf,std::vector<bool>{false},vacuum,tallies));
+	cells.push_back(cell(cell4surf,std::vector<bool>{true},vacuum, tallies));
 	
 	return universe(cells,nSrc); 
 }

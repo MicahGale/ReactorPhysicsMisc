@@ -48,12 +48,18 @@ class cell {
 		 * @return true if and only if the point is inside the cell
 		 */
 		bool findInOut(const vec& point) {
+			bool sideBuffer;
 			bool inCell=true;
+			vec test(std::vector<double>{3,3,3});
+			surface* ptr;
 			//test every surface
 			for(int i=0; i<surfaces.size();i++) {
 				//if on the wrong side it's not inside
-				//ptr=surfaces[i];
-				if(surfaces[i]->findSide(point)!=side[i]) {
+				ptr=surfaces[i];
+				sideBuffer=side[i];
+				ptr->helloWorld();
+				ptr->findSide(test);
+				if(ptr->findSide(point)	!=sideBuffer) {
 					inCell=false;
 				}
 			}
