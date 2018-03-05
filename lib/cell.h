@@ -29,6 +29,7 @@ class cell {
 		 * 			by reference, and will be mutated!
 		 *
 		 */
+		cell(){}
 		cell(const std::vector<surface*> &surfaces,
 				const std::vector<bool> &side, 
 				const std::vector<material> &materials, 

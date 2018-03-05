@@ -78,6 +78,8 @@ class vec {
 					/(std::pow(1-w*w,0.5));
 				z=mu*w-std::pow(1-mu*mu,0.5)*std::pow(1-w*w,0.5)*std::cos(phi);
 			}
+			std::vector<double> ret {x,y,z};
+			return vec(ret);
 		}
 		static double getDistance(const vec& a, const vec& b) {
 			vec c= a-b; //get the displacement

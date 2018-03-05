@@ -1,21 +1,10 @@
 
 class source {
 	public:
-		virtual event getNextNeutron();
-		vec getIsoDir() {
-			double mu, phi,x,y,z,xy;
-
-			mu=2*getSquiggle()-1;
-			phi=2*M_PI*getSquiggle();
-			z=mu; 
-			xy=std::pow(1-mu*mu,0.5); //project onto the xy plane
-			x=std::cos(phi)*xy;
-			y=std::sin(phi)*xy;
-			std::vector<double> ret {x,y,z};
-			return vec(ret); //return the isotropic source
-		}
+		virtual event getNextNeutron()=0;
+		
 };
-
+/*
 class isoPntSrc: public source {
 	private:
 		vec pnt;
@@ -25,7 +14,7 @@ class isoPntSrc: public source {
 			//TODO implement
 		}
 
-};
+};*/
 class isoXLineSrc: public source {
 	private:
 		double xMax;
@@ -33,6 +22,11 @@ class isoXLineSrc: public source {
 		double E;
 
 	public:
+		isoXLineSrc(double xMin, double xMax,double E) {
+			this->xMin=xMin;
+			this->xMax=xMax;
+			this->E=E;
+		}
 		event getNextNeutron() {
 			vec point, dir;
 			double x,y,z;
@@ -48,5 +42,16 @@ class isoXLineSrc: public source {
 		double sampleE() {
 			return E;
 		}
+                vec getIsoDir() {
+                        double mu, phi,x,y,z,xy;
 
+                        mu=2*getSquiggle()-1;
+                        phi=2*M_PI*getSquiggle();
+                        z=mu;
+                        xy=std::pow(1-mu*mu,0.5); //project onto the xy plane
+                        x=std::cos(phi)*xy;
+                        y=std::sin(phi)*xy;
+                        std::vector<double> ret {x,y,z};
+                        return vec(ret); //return the isotropic source
+                }
 };
