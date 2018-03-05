@@ -96,6 +96,34 @@ class trackTally: public meshTally {
 		}
 		void doTally(const event& end, const vec& start, double sigT,
 				const material& mat) {
+			double dis,xDis,botX,topX,W;
+			int bot, top,startMesh,endMesh;
+			vec displacement;
+
+			W=end.getW()*sigT; //add sigma_T to get that stuff
+			dis=vec::getDistance(end.getPoint(),start); //get the flight distance
+			displacement=end.getPoint()-start;
+			xDis=displacement.get(0);  //project onto the x axis
+			startMesh=this->findMesh(start); //find the limits
+			endMesh=this->findMesh(end.getPoint()); //find the limits
+			if(startMesh<endMesh) { //if going left to right
+				bot=startMesh;
+				top=endMesh;
+				botX=start.get(0);
+				topX=end.getPoint().get(0);
+			} else  {  //otherwise going right to left
+				bot=endMesh;
+				top=startMesh;
+				botX=end.getPoint().get(0);
+				topX=start.get(0);
+			}
+			buffer[botX]+=W*dis*(meshBounds[botX+1]-botX)/xDis; //add the edge contribution
+
+			for(int i=botX+1;i<topX;i++) {  //fill in all of the mesh points in between
+				buffer[i]+=W*dis*stepSize/xDis;
+			}
+			buffer[topX]+=W*dis*(topX-meshBounds[topX])/xDis; //add top edge contribution
+
 
 		}
                 void flushTally() {

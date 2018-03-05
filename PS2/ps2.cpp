@@ -49,17 +49,22 @@ static universe worldBuild() {
 	std::vector<material> mat2 {material("",1,1/material::BARNS_TO_CM,0.3,1.2)};
 	std::vector<material> vacuum {material()}; //this is a vacuum material
 	//tallies!
-	std::vector<tally*> tallies;
-	tallies.reserve(2);
-	tallies.push_back(new collideTally());
-	tallies.push_back(new trackTally());
+	int bins=10;
+	std::vector<tally*> tallies1,tallies2,empty;
+	tallies1.reserve(2);
+	tallies1.push_back(new collideTally(left,midPlane,bins));
+	tallies1.push_back(new trackTally(left,midPlane,bins));
+
+	tallies2.reserve(2);
+	tallies2.push_back(new collideTally(midPlane,right,bins));
+	tallies2.push_back(new trackTally(midPlane,right,bins));
 	//source!!
 	source* nSrc= new isoXLineSrc(-2,0,20);
 
-	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies));
-	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies));
-	cells.push_back(cell(cell3surf,std::vector<bool>{false},vacuum,tallies));
-	cells.push_back(cell(cell4surf,std::vector<bool>{true},vacuum, tallies));
+	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies1));
+	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies2));
+	cells.push_back(cell(cell3surf,std::vector<bool>{false},vacuum,empty));
+	cells.push_back(cell(cell4surf,std::vector<bool>{true},vacuum, empty));
 	
 	return universe(cells,nSrc); 
 }
