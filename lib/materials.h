@@ -165,16 +165,17 @@ class material {
 	 *@return an event with the energy and event type
 	 */
 	event randomWalk(const event& start) {
-		double total, squiggle, mu,mu_cm, phi,E;
+		double total, squiggle, mu,mu_cm, phi,E, W;
 		vec dir;
 		event output;
 
 		E=start.getE();
+		W=start.getW();
 		total= this->getMacroSigT(E); //get the total cross-section
 		squiggle=getSquiggle();
 	        dir=start.getDir();
 		if(vac) {
-			return event(E,event::LEAK,start.getPoint(),dir); //leak the neutron and die
+			return event(E,W, event::LEAK,start.getPoint(),dir); //leak the neutron and die
 		}	
 		//if it was scattered
 		if(squiggle<= (this->getMacroSigS(E)/total) ) {
@@ -186,10 +187,10 @@ class material {
 			//Solved with: <https://www.wolframalpha.com/input/?i=solve+u%3D(1%2BA*v)%2F(sqrt(A%5E2%2B2*A*v%2B1))+for+v>
 			//mu_cum=(std::pow(A*A*A*A*mu*mu+A*A*mu*mu*mu*mu-A*A*mu*mu,0.5)+A*mu*mu-A)/(A*A);
 			//E=E*squiggle/((1-this->alpha)); //scatter to a whole new energy!
-			output= event(E,event::SCATTER,start.getPoint(),dir);
+			output= event(E,W,event::SCATTER,start.getPoint(),dir);
 				
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
-			output=event(0, event::ABSORB,start.getPoint(),dir);
+			output=event(0,W, event::ABSORB,start.getPoint(),dir);
 		}
 		return output;	
 	}

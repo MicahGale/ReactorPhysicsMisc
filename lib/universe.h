@@ -39,7 +39,7 @@ class universe {
 					isAlive=true;
 					//jump 100 random numbers for every neutron
 					srand((batchCnt*BatchSize+ntrns)*100); 
-					history=nSource->getNextNeutron(double W);//start a neutron
+					history=nSource->getNextNeutron(W);//start a neutron
 //					std::cout<<"Neutron: "<<ntrns<<" Batch: "<<batchCnt<<std::endl;
 					while(isAlive) {
 						cell=this->findCell(history.getPoint()); 

@@ -97,12 +97,16 @@ class cell {
 			}
 			//if we got to this point there were no intercepts... throw an error
 			throw 20;
-		}	
+		}
+		/**
+	 	*Calculates the total Sigma_T for the cell
+	 	*/	
                 double getMacroMacroSigT( double E) {
                         double sum =0; 
                         for(material mat: materials) {
                                 sum+=mat.getMacroSigT(E);
                         }
+			return sum;
                 }
                 /**
                  * *based on cross-sections decide which material to scatter off of
@@ -155,7 +159,7 @@ class cell {
 		  *@return the event where the neutron exits the cell or dies.
 		  */
 		event walkRandomly(const event& start) {
-			double x, dis,E;
+			double x, dis,E,W;
 			vec intercept,pnt,dir,newPnt;
 			event finish,startIntern;
 			bool inCell;
@@ -165,12 +169,13 @@ class cell {
 			finish=start;
 			startIntern=start;
 			E=start.getE();
+			W=start.getW();
 			pnt=start.getPoint();
 			dir=start.getDir();
 			//if this cell is a vacuum just leak the neutron asap
 			if(this->isVac()) {
-				finish=event(E,event::LEAK,pnt,dir);
-				this->doTallies(finish,pnt);
+				finish=event(E,W,event::LEAK,pnt,dir);
+				this->doTallies(finish,pnt,this->getMacroMacroSigT(E),0);
 				return finish;
 			}
 			//while the neutron is in this cell
@@ -187,15 +192,16 @@ class cell {
 						//if the neutron died
 						inCell=false;
 					}
-					this->doTallies(finish,pnt);
+					this->doTallies(finish,pnt,
+							this->getMacroMacroSigT(E),mat);
 					startIntern=finish; //update for next round
 					pnt=startIntern.getPoint();		
 				} else { //if it exited the cell.
-					finish= event(E,event::NO_EVENT,intercept,dir);
+					finish= event(E,W,event::NO_EVENT,intercept,dir);
 					inCell=false;
 				}
 			}
-			this->doTallies(finish,pnt);
+			this->doTallies(finish,pnt,this->getMacroMacroSigT(E),mat);
 
 			return finish;
 
