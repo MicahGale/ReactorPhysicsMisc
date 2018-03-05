@@ -29,13 +29,17 @@ class universe {
 				//run a batch
 				for(int ntrns=0; ntrns<BatchSize;ntrns++) {
 					isAlive=true;
+					//jump 100 random numbers for every neutron
+					srand((batchCnt*BatchSize+ntrns)*100); 
 					history=nSource->getNextNeutron();//start a neutron
 					while(isAlive) {
 						cell=this->findCell(history.getPoint()); 
 						//find where you are
 						history=this->cells[cell].walkRandomly(history);
-						if(history.getType()==event::ABSORB)
+						if(history.getType()==event::ABSORB||
+								history.getType()==event::LEAK) {
 							isAlive=false; //kill it
+						}
 					}
 					//TODO figure out fission banking		
 				}
