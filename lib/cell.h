@@ -6,9 +6,10 @@
 
 class cell {
 	private:
-		std::vector<std::tr1::shared_ptr<surface>> surfaces;
+		std::vector<surface*> surfaces;
+		//std::vector<std::tr1::shared_ptr<surface>> surfaces;
 		std::vector<material> materials;
-		std::vector<std::tr1::shared_ptr<tally>>   tallies;
+		std::vector<tally*>   tallies;
 		std::vector<bool> side; //which side the cell is on for all surfaces
 	public:
 		/**
@@ -28,10 +29,10 @@ class cell {
 		 * 			by reference, and will be mutated!
 		 *
 		 */
-		cell(const std::vector<std::tr1::shared_ptr<surface>> &surfaces,
+		cell(const std::vector<surface*> &surfaces,
 				const std::vector<bool> &side, 
 				const std::vector<material> &materials, 
-				std::vector<std::tr1::shared_ptr<tally>> &tallies) {
+				std::vector<tally*> &tallies) {
 
 			this->surfaces=surfaces;
 			this->materials=materials;
@@ -47,12 +48,11 @@ class cell {
 		 */
 		bool findInOut(const vec& point) {
 			bool inCell=true;
-			std::tr1::shared_ptr<surface> ptr;
 			//test every surface
 			for(int i=0; i<surfaces.size();i++) {
 				//if on the wrong side it's not inside
-				ptr=surfaces[i];
-				if(ptr->findSide(point)!=side[i]) {
+				//ptr=surfaces[i];
+				if(surfaces[i]->findSide(point)!=side[i]) {
 					inCell=false;
 				}
 			}
@@ -60,8 +60,7 @@ class cell {
 		}
 		vec findIntercept(const event& start) {
 			vec intercept;
-
-			for(std::tr1::shared_ptr<surface> ptr: surfaces) {
+			for(surface* ptr: surfaces) {
 				try{
 					intercept= ptr->findIntercept(start);
 					if( this->findInOut(intercept)) {
@@ -111,7 +110,8 @@ class cell {
 		  */
 		 void doTallies(const event& end, const vec& start) {
 			
-			 for(std::tr1::shared_ptr<tally> ptr: tallies) {
+			 
+			 for(tally* ptr: tallies) {
 				ptr->doTally(end, start);
 			 }
 		 }
