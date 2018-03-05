@@ -96,6 +96,9 @@ class material {
                }
                this->T=T;
 	}
+	bool isVac() {
+		return this->vac;
+	}
 	double getMacroSigP(double E) {
 		return this->sigPot*this->N*BARNS_TO_CM;
 	}

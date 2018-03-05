@@ -20,7 +20,7 @@ static double getSquiggle() {
 
 int main() {
 	universe shire=worldBuild();
-	shire.randomWalk(1,5000);
+	shire.randomWalk(1000,100);
 	return 0;
 }
 static universe worldBuild() {
@@ -28,31 +28,33 @@ static universe worldBuild() {
 	cell cell1, cell2,cell3,cell4;
 	std::vector<cell> cells;
 	//surfaces!
-	xPlane midPlane(0.0);
-	xPlane left(-2.0);
-	xPlane right(4.0); 
+	double midPlane=0.0;
+	double left = -2.0;
+	double right=4.0; 
 
 	cell1surf.reserve(2);
-	cell1surf.push_back(&midPlane);
-	cell1surf.push_back(&left);
+	cell1surf.push_back(new xPlane(midPlane));
+	cell1surf.push_back(new xPlane(left));
 
 	cell2surf.reserve(2);
-	cell2surf.push_back(&midPlane);
-	cell2surf.push_back(&right);
+	cell2surf.push_back(new xPlane(midPlane));
+	cell2surf.push_back(new xPlane(right));
 	
 	cell3surf.reserve(1);
-	cell3surf.push_back(&left);
+	cell3surf.push_back(new xPlane(left));
 	cell4surf.reserve(1);
-	cell4surf.push_back(&right);
+	cell4surf.push_back(new xPlane(right));
 	//materials!!
 	std::vector<material> mat1 {material("",1,1/material::BARNS_TO_CM,0.5,0.5)};
 	std::vector<material> mat2 {material("",1,1/material::BARNS_TO_CM,0.3,1.2)};
 	std::vector<material> vacuum {material()}; //this is a vacuum material
 	//tallies!
-	std::vector<tally*> tallies(1);
+	std::vector<tally*> tallies;
+	tallies.reserve(2);
+	tallies.push_back(new collideTally());
+	tallies.push_back(new trackTally());
 	//source!!
-	isoXLineSrc src(-2,0,20);
-	source* nSrc= &src;
+	source* nSrc= new isoXLineSrc(-2,0,20);
 
 	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies));
 	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies));

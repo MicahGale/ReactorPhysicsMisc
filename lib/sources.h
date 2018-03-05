@@ -1,6 +1,7 @@
 
 class source {
 	public:
+		source(){}
 		virtual event getNextNeutron()=0;
 		
 };

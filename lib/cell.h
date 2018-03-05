@@ -42,6 +42,22 @@ class cell {
 
 		}
 		/**
+		 *Determines if this cell is a vacuum.
+		 *
+		 * @return true iff the cell contains at least one vacuum material
+		 */
+		bool isVac() {
+			bool isVac=false;
+
+			for(material inspectee: this->materials) {
+				if(inspectee.isVac()) { //if any material is vacuum return true
+					isVac=true;
+					return isVac;
+				}
+			}
+			return isVac;
+		}
+		/**
 		 * Determines if this point is inside of the cell.
 		 *
 		 * @param point - the point to be evaluated at.
@@ -141,7 +157,12 @@ class cell {
 			E=start.getE();
 			pnt=start.getPoint();
 			dir=start.getDir();
-
+			//if this cell is a vacuum just leak the neutron asap
+			if(this->isVac()) {
+				finish=event(E,event::LEAK,pnt,dir);
+				this->doTallies(finish,pnt);
+				return finish;
+			}
 			//while the neutron is in this cell
 			while(inCell) {
 				intercept=this->findIntercept(finish);
