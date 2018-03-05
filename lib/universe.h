@@ -23,15 +23,17 @@ class universe {
 			bool isAlive;
 			event history;
 			int cell;
+			double W;
 
-			//run the batches	
+			//run the batches
+			W=1/BatchSize; //start off with the tallies being per start neutron	
 			for(int batchCnt=0;batchCnt<Batches;batchCnt++) {
 				//run a batch
 				for(int ntrns=0; ntrns<BatchSize;ntrns++) {
 					isAlive=true;
 					//jump 100 random numbers for every neutron
 					srand((batchCnt*BatchSize+ntrns)*100); 
-					history=nSource->getNextNeutron();//start a neutron
+					history=nSource->getNextNeutron(double W);//start a neutron
 //					std::cout<<"Neutron: "<<ntrns<<" Batch: "<<batchCnt<<std::endl;
 					while(isAlive) {
 						cell=this->findCell(history.getPoint()); 

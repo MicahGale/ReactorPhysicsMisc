@@ -2,6 +2,7 @@
 class event {
 	private:
 		double E;
+		double W; //weight
 		short int type;
 		vec point;  //where the neutron is
 		vec direction; //where it's going
@@ -20,9 +21,15 @@ class event {
 		 * Stores the position, direction, and energy, and last interaction type.
 		 * The direction is always converted to a unit vector when stored.
 		 *
+		 * @param E- the current neutron energy
+		 * @param W - the current neutron weight
+		 * @param point- the location in space
+		 * @param direction- the current heading.  This will be converted to a unit vector
+		 *
 		 */
-		event(double E, int type,const  vec& point, const vec& direction) {
+		event(double E, double W, int type,const  vec& point, const vec& direction) {
 			this->E=E;
+			this->W=W;
 			this->type=type;
 			this->point=point;
 			this->direction=direction.getUnit();
@@ -38,6 +45,9 @@ class event {
 		}
 		vec getDir() const {
 			return direction;
+		}
+		double getW() const {
+			return W;
 		}
 
 

@@ -2,7 +2,7 @@
 class source {
 	public:
 		source(){}
-		virtual event getNextNeutron()=0;
+		virtual event getNextNeutron(double W)=0;
 		
 };
 /*
@@ -28,7 +28,16 @@ class isoXLineSrc: public source {
 			this->xMax=xMax;
 			this->E=E;
 		}
-		event getNextNeutron() {
+		/**
+		 *Generates a neutron history to start off. 
+		 *
+		 * Samples x within the range specified by xMin and xMax.
+		 * y and z are between -RAND_MAX/2 and RAND_MAX/2.
+		 * The direction is isotropic.
+		 *
+		 * @param W- the initial neutron weight
+		 */
+		event getNextNeutron(double W) {
 			vec point, dir;
 			double x,y,z;
 
@@ -38,7 +47,7 @@ class isoXLineSrc: public source {
 			z=rand()-RAND_MAX/2;
 		        std::vector<double> ret {x,y,z};
 			point=vec(ret);
-			return event(this->sampleE(),event::NO_EVENT,point,dir);	
+			return event(this->sampleE(),W,event::NO_EVENT,point,dir);	
 		}
 		double sampleE() {
 			return E;
