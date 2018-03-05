@@ -37,7 +37,8 @@ class material {
 	*Boltzmann Constant taken from: <https://en.wikipedia.org/wiki/Boltzmann_constant>
 	*In units of eV/k
 	*/
-	static double BOLTZ_K(){return 8.6173303e-5;}
+	static const double BOLTZ_K(){return 8.6173303e-5;}
+	static constexpr double BARNS_TO_CM=1e-24;
 	/**
 	 *Constructs a vacuum material
 	 *
@@ -50,7 +51,17 @@ class material {
 		this->alpha=0;
 		A=0;                  
 	}
-	material (std::string name, int A, double N, double sigPot, double, double flatSigA, 
+        material (std::string name, int A, double N, double sigPot, double flatSigA) {
+                int top, bottom;
+                this->name=name;
+                this->A=A;
+                top=A-1;
+                bottom=A+1; //calculation top and bottom terms of alpha
+                this->alpha=top*top/(bottom*bottom);
+                this->sigPot=sigPot;
+                this->N=N;
+	}
+	material (std::string name, int A, double N, double sigPot, double flatSigA, 
 			std::vector<double> E0, std::vector<double> GG, 
 			std::vector<double> GN, double T) {
 		int top, bottom;
@@ -86,7 +97,7 @@ class material {
                this->T=T;
 	}
 	double getMacroSigP(double E) {
-		return this->sigPot*this->N;
+		return this->sigPot*this->N*BARNS_TO_CM;
 	}
 	double getMicroSigP(double E) {
 		return this->sigPot;
@@ -135,11 +146,11 @@ class material {
 
 	double getMacroSigS(double E) {
                 return this->getMacroSigP(E)+
-                        this->N*this->getMicroSigSRes(E);
+                        this->N*this->getMicroSigSRes(E)*BARNS_TO_CM;
         }
 
 	double getMacroSigA(double E) {
-                return this->N*this->getMicroSigA(E);
+                return this->N*this->getMicroSigA(E)*BARNS_TO_CM;
         }
 
 	double getMacroSigT(double E) {
