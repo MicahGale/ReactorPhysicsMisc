@@ -21,8 +21,9 @@ static double getSquiggle() {
 
 int main() {
 	universe shire=worldBuild();
-	shire.randomWalk(1000,100);
-	dumpData(shire);
+	shire.randomWalk(100,1);
+	//shire.randomWalk(100000,100);
+	//dumpData(shire);
 	return 0;
 }
 static void dumpData(universe& shire) {
@@ -67,19 +68,20 @@ static universe worldBuild() {
 	cell4surf.reserve(1);
 	cell4surf.push_back(new xPlane(right));
 	//materials!!
+	
 	std::vector<material> mat1 {material("",1,1/material::BARNS_TO_CM,0.5,0.5)};
 	std::vector<material> mat2 {material("",1,1/material::BARNS_TO_CM,0.3,1.2)};
-	std::vector<material> vacuum {material()}; //this is a vacuum material
+	std::vector<material> vacuum { material()}; //this is a vacuum material
 	//tallies!
-	int bins=10;
+	
 	std::vector<tally*> tallies1,tallies2,empty;
 	tallies1.reserve(2);
-	tallies1.push_back(new collideTally(left,midPlane,bins));
-	tallies1.push_back(new trackTally(left,midPlane,bins));
+	tallies1.push_back(new collideTally(left,midPlane,10));
+	tallies1.push_back(new trackTally(left,midPlane,10));
 
 	tallies2.reserve(2);
-	tallies2.push_back(new collideTally(midPlane,right,bins));
-	tallies2.push_back(new trackTally(midPlane,right,bins));
+	tallies2.push_back(new collideTally(midPlane,right,20));
+	tallies2.push_back(new trackTally(midPlane,right,20));
 	//source!!
 	source* nSrc= new isoXLineSrc(-2,0,20);
 

@@ -32,7 +32,7 @@ class cell {
 		cell(){}
 		cell(const std::vector<surface*> &surfaces,
 				const std::vector<bool> &side, 
-				const std::vector<material> &materials, 
+				std::vector<material> materials, 
 				std::vector<tally*> &tallies) {
 
 			this->surfaces=surfaces;
@@ -49,8 +49,8 @@ class cell {
 		bool isVac() {
 			bool isVac=false;
 
-			for(material inspectee: this->materials) {
-				if(inspectee.isVac()) { //if any material is vacuum return true
+			for(int i=0; i<materials.size();i++) {
+				if(materials[i].isVac()) { //if any material is vacuum return true
 					isVac=true;
 					return isVac;
 				}
@@ -72,10 +72,7 @@ class cell {
 			for(int i=0; i<surfaces.size();i++) {
 				//if on the wrong side it's not inside
 				ptr=surfaces[i];
-				sideBuffer=side[i];
-				ptr->helloWorld();
-				ptr->findSide(test);
-				if(ptr->findSide(point)	!=sideBuffer) {
+				if(ptr->findSide(point)	!=side[i]) {
 					inCell=false;
 				}
 			}
@@ -178,9 +175,11 @@ class cell {
 			W=start.getW();
 			pnt=start.getPoint();
 			dir=start.getDir();
+			std::cout<<this->isVac()<<std::endl;
 			//if this cell is a vacuum just leak the neutron asap
 			if(this->isVac()) {
 				finish=event(E,W,event::LEAK,pnt,dir);
+				std::cout<<"Hi there"<<std::endl;
 				this->doTallies(finish,pnt,this->getMacroMacroSigT(E),0);
 				return finish;
 			}
@@ -206,6 +205,7 @@ class cell {
 					finish= event(E,W,event::NO_EVENT,intercept,dir);
 					inCell=false;
 				}
+				finish.print();
 			}
 			this->doTallies(finish,pnt,this->getMacroMacroSigT(E),mat);
 

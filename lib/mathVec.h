@@ -85,6 +85,14 @@ class vec {
 			vec c= a-b; //get the displacement
 			return c.getMagnitude(); //and now the distance
 		}
+		std::string print() const {
+			std::stringstream stream("[");
+			for( double hi: data) {
+				stream<<hi<<" , ";
+			}
+			stream<<"]";
+			return stream.str();
+		}
 };
 
 /**

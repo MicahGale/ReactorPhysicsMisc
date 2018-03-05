@@ -49,6 +49,26 @@ class event {
 		double getW() const {
 			return W;
 		}
+		void print()const {
+			std::cout<<"E: "<<E<<" W: "<<W<<" Pnt: ";
+			std::cout<<point.print()<<" Dir: ";
+			std::cout<<direction.print()<<" Event: ";
+			switch(type) {
+				case SCATTER:
+					std::cout<<"Scat";
+					break;
+				case ABSORB:
+					std::cout<<"absorb";
+					break;
+				case NO_EVENT:
+					std::cout<<"None";
+					break;
+				case LEAK:
+					std::cout<<"Leak";
+					break;
+			}
+			std::cout<<std::endl; 
+		}
 
 
 

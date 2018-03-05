@@ -59,7 +59,9 @@ class material {
                 bottom=A+1; //calculation top and bottom terms of alpha
                 this->alpha=top*top/(bottom*bottom);
                 this->sigPot=sigPot;
+		this->flatSigA=flatSigA;
                 this->N=N;
+		this->vac=false;
 	}
 	material (std::string name, int A, double N, double sigPot, double flatSigA, 
 			std::vector<double> E0, std::vector<double> GG, 
@@ -192,6 +194,7 @@ class material {
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
 			output=event(0,W, event::ABSORB,start.getPoint(),dir);
 		}
+		output.print();
 		return output;	
 	}
 	//################################SLBW Section#################################
