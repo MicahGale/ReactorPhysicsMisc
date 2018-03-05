@@ -12,6 +12,7 @@ static double getSquiggle();
 #include "../lib/universe.h"
 
 static universe worldBuild();
+static void dumpData(universe& shire);
 static double getSquiggle() {
         double squiggle=(rand()/((double)(RAND_MAX)+1));
         return squiggle;
@@ -21,7 +22,28 @@ static double getSquiggle() {
 int main() {
 	universe shire=worldBuild();
 	shire.randomWalk(1000,100);
+	dumpData(shire);
 	return 0;
+}
+static void dumpData(universe& shire) {
+	std::vector<std::vector<double>>buffer;
+	std::ofstream out;
+	
+	std::vector<int> cells {0,1};
+	std::vector<int> tall {0,1};
+	std::vector<std::string> fileName {"FluxByCollide.csv","FluxbyPath.csv"};
+	for(int i=0;i<tall.size();i++) {
+		out.open(fileName[i],std::ios::trunc); //open that shit!
+		out<<"Space![x],Mean!,Std.Dev!!!"<<std::endl;
+		
+		for(int cell: cells) {
+			buffer=shire.getTallyData(cell,i,1); //get the tally data
+			for(std::vector<double> yup: buffer) {
+				out<<yup[0]<<","<<yup[1]<<","<<yup[2]<<std::endl; //write that line!!
+			}
+		}
+		out.close();
+	}
 }
 static universe worldBuild() {
 	std::vector<surface*> cell1surf,cell2surf,cell3surf,cell4surf;

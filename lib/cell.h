@@ -152,6 +152,12 @@ class cell {
 				ptr->flushTally();
 			}
 		 }
+		 int getTallySize() {
+			 return tallies.size();
+		 }
+		 std::vector<std::vector<double>> getTallyData(int i,double W) {
+			return tallies[i]->getData(W);
+		 }	
 		 /**
 		  *Does the Monte Carlo walk through the cell. Updating tallies as needed
 		  *

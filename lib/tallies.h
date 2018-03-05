@@ -5,6 +5,7 @@ class tally {
 		virtual void doTally(const event& end, const vec& start,double sigT,
 			       	const material& mat)=0;
 		virtual void flushTally()=0;
+		virtual std::vector<std::vector<double>> getData(double W)=0;
 };
 class meshTally: public tally {
 	protected: 
@@ -78,6 +79,19 @@ class collideTally: public meshTally {
 				buffer[i]=0; //clear it out for next one
 			}
 		}
+		std::vector<std::vector<double>> getData(double W) {
+			this->flushTally();
+			std::vector<std::vector<double>> ans;
+			ans.resize(meshBounds.size()-1);  //setup the size
+
+			for(int i=0;i<meshBounds.size()-1;i++) {
+				ans[i].resize(3);  //sqwoosh it! screw spelling! viva la caffiene!
+				ans[i][0]=(meshBounds[i]+meshBounds[i+1])/2; //the spatial part!
+				ans[i][1]=mean[i]/W; //get the mean
+				ans[i][2]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
+			}
+			return ans;
+		}
 };
 
 class trackTally: public meshTally {
@@ -133,5 +147,16 @@ class trackTally: public meshTally {
                                 buffer[i]=0; //clear it out for next one
                         }
                 }
+                std::vector<std::vector<double>> getData(double W) {
+                        this->flushTally();
+                        std::vector<std::vector<double>> ans;
+                        ans.resize(meshBounds.size()-1);  //setup the size
 
+                        for(int i=0;i<meshBounds.size()-1;i++) {
+                                ans[i].resize(2);  //sqwoosh it! screw spelling! viva la caffiene!
+                                ans[i][0]=mean[i]/W; //get the mean
+                                ans[i][1]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
+                        }
+                        return ans;
+                }
 };

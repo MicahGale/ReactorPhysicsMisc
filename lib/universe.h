@@ -25,6 +25,12 @@ class universe {
 				buf.flushTallies();
 			}
 		}
+		int getCellSize() {
+			return cells.size();
+		}
+		std::vector<std::vector<double>> getTallyData(int i, int j,double W) {
+			return cells[i].getTallyData(j,W);
+		}
 		void randomWalk(int BatchSize, int Batches) {
 			bool isAlive;
 			event history;
