@@ -19,6 +19,12 @@ class universe {
 			}
 			return -1; //well your universe is screwed. Prepare for apocolypse
 		}
+
+		void flushTallies() {
+			for( cell buf: this->cells) {
+				buf.flushTallies();
+			}
+		}
 		void randomWalk(int BatchSize, int Batches) {
 			bool isAlive;
 			event history;
@@ -44,6 +50,8 @@ class universe {
 							isAlive=false; //kill it
 						}
 					}
+					//flush the tallies after everything died
+					this->flushTallies();
 					//TODO figure out fission banking		
 				}
 			}

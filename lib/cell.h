@@ -131,12 +131,22 @@ class cell {
 		 /**
 		  *Runs all of the tallies to see if they need to be updated.
 		  */
-		 void doTallies(const event& end, const vec& start) {
+		 void doTallies(const event& end, const vec& start, double SigT, int Mat) {
 			
 			 
 			 for(tally* ptr: tallies) {
-				ptr->doTally(end, start);
+				ptr->doTally(end, start,SigT, materials[Mat]);
 			 }
+		 }
+		 /**
+		  *Flushes the tallies for this neutron history.
+		  *
+		  * Must be called with every neutron death on all cells.
+		  */
+		 void flushTallies()  {
+			for(tally* ptr: tallies) {
+				ptr->flushTally();
+			}
 		 }
 		 /**
 		  *Does the Monte Carlo walk through the cell. Updating tallies as needed
