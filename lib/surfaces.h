@@ -45,9 +45,8 @@ class xPlane: public surface {
 		 *
 		 */
 		bool findSide(const vec point) {
-			//double xEval=point.get(0); //get the x point
-			//return xEval>x;
-			return true;
+			double xEval=point.get(0); //get the x point
+			return xEval>x;
 		}
 		void helloWorld() {
 
