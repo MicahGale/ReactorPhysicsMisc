@@ -3,7 +3,6 @@
 	public:
 		virtual vec findIntercept(const event& start)=0;
 		virtual bool findSide(const vec point)=0;
-		virtual void helloWorld()=0;
 };
 
 class xPlane: public surface {
@@ -42,14 +41,13 @@ class xPlane: public surface {
 		 * Determines which side of the plane the vector is on.
 		 *
 		 * @return false- on the negative infinity side. True- Positive infinity side
-		 *
+		 * @throws int 5 if the point is within 1nm of being on the surface
 		 */
 		bool findSide(const vec point) {
 			double xEval=point.get(0); //get the x point
+			if(fabs(xEval-x)<1e-7) //throw error that it's on the edge if so
+				throw 5;
 			return xEval>x;
-		}
-		void helloWorld() {
-
 		}
 
 };

@@ -21,7 +21,7 @@ static double getSquiggle() {
 
 int main() {
 	universe shire=worldBuild();
-	shire.randomWalk(100,1);
+	shire.randomWalk(3,1);
 	//shire.randomWalk(100000,100);
 	//dumpData(shire);
 	return 0;
@@ -85,10 +85,10 @@ static universe worldBuild() {
 	//source!!
 	source* nSrc= new isoXLineSrc(-2,0,20);
 
-	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies1));
-	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies2));
-	cells.push_back(cell(cell3surf,std::vector<bool>{false},vacuum,empty));
-	cells.push_back(cell(cell4surf,std::vector<bool>{true},vacuum, empty));
+	cells.push_back(cell(cell1surf,std::vector<bool>{false,true},mat1,tallies1,std::vector<int>{1,2}));
+	cells.push_back(cell(cell2surf,std::vector<bool>{true, false},mat2,tallies2, std::vector<int>{0,3}));
+	cells.push_back(cell(cell3surf,std::vector<bool>{false},vacuum,empty,std::vector<int>{0}));
+	cells.push_back(cell(cell4surf,std::vector<bool>{true},vacuum, empty,std::vector<int>{1}));
 	
 	return universe(cells,nSrc); 
 }

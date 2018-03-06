@@ -13,11 +13,20 @@ class universe {
 			this->nSource=nSource;
 		}
 		int findCell(const vec& pnt) {
-			for(int i=0;i<cells.size();i++) { //test all cells
-				if( cells[i].findInOut(pnt))
+			for(int i=0;i<cells.size();i++) { //test all cell
+				if( cells[i].findInOut(pnt)) {
 					return i; //if it's in this cell give up you found it
+				}
 			}
 			return -1; //well your universe is screwed. Prepare for apocolypse
+		}
+		int findCell(const vec& pnt, const std::vector<int>& neighbor) {
+			for(int neigh: neighbor) {
+				if(cells[neigh].findInOut(pnt)) {
+					return neigh;
+				}
+			}
+			return this->findCell(pnt);
 		}
 
 		void flushTallies() {
@@ -36,6 +45,7 @@ class universe {
 			event history;
 			int cell;
 			double W;
+			std::vector<int> neighbors;
 
 			//run the batches
 			W=1/BatchSize; //start off with the tallies being per start neutron	
@@ -48,13 +58,14 @@ class universe {
 					history=nSource->getNextNeutron(W);//start a neutron
 //					std::cout<<"Neutron: "<<ntrns<<" Batch: "<<batchCnt<<std::endl;
 					while(isAlive) {
-						cell=this->findCell(history.getPoint()); 
+						cell=this->findCell(history.getPoint(),neighbors);
 						//find where you are
 						history=this->cells[cell].walkRandomly(history);
 						if(history.getType()==event::ABSORB||
 								history.getType()==event::LEAK) {
 							isAlive=false; //kill it
 						}
+						neighbors=cells[cell].getNeighbors();
 					}
 					//flush the tallies after everything died
 					this->flushTallies();

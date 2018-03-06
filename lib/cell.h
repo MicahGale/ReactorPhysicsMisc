@@ -10,6 +10,7 @@ class cell {
 		//std::vector<std::tr1::shared_ptr<surface>> surfaces;
 		std::vector<material> materials;
 		std::vector<tally*>   tallies;
+		std::vector<int>      neighbors;
 		std::vector<bool> side; //which side the cell is on for all surfaces
 	public:
 		/**
@@ -30,16 +31,20 @@ class cell {
 		 *
 		 */
 		cell(){}
-		cell(const std::vector<surface*> &surfaces,
-				const std::vector<bool> &side, 
-				std::vector<material> materials, 
-				std::vector<tally*> &tallies) {
+		cell(const std::vector<surface*> &surfaces,const std::vector<bool> &side, 
+				std::vector<material> materials,std::vector<tally*> &tallies,
+				std::vector<int> neighbors) {
 
 			this->surfaces=surfaces;
 			this->materials=materials;
 			this->tallies=tallies;
 			this->side=side;
+			this->neighbors=neighbors;
 
+		}
+
+		std::vector<int> getNeighbors() {
+			return this->neighbors;
 		}
 		/**
 		 *Determines if this cell is a vacuum.
@@ -52,7 +57,7 @@ class cell {
 			for(int i=0; i<materials.size();i++) {
 				if(materials[i].isVac()) { //if any material is vacuum return true
 					isVac=true;
-					return isVac;
+					//return isVac;
 				}
 			}
 			return isVac;
@@ -64,16 +69,21 @@ class cell {
 		 * @return true if and only if the point is inside the cell
 		 */
 		bool findInOut(const vec& point) {
-			bool sideBuffer;
 			bool inCell=true;
-			vec test(std::vector<double>{3,3,3});
 			surface* ptr;
+
 			//test every surface
 			for(int i=0; i<surfaces.size();i++) {
 				//if on the wrong side it's not inside
 				ptr=surfaces[i];
-				if(ptr->findSide(point)	!=side[i]) {
-					inCell=false;
+				try{
+					if(ptr->findSide(point)	!=side[i]) {
+						inCell=false;
+					}
+				} catch( int e) {
+					//silently catch the exception 5
+					//this means the point is on the surface
+					//can assume is in the cell then
 				}
 			}
 			return inCell;
@@ -175,37 +185,43 @@ class cell {
 			W=start.getW();
 			pnt=start.getPoint();
 			dir=start.getDir();
-			std::cout<<this->isVac()<<std::endl;
 			//if this cell is a vacuum just leak the neutron asap
 			if(this->isVac()) {
 				finish=event(E,W,event::LEAK,pnt,dir);
-				std::cout<<"Hi there"<<std::endl;
 				this->doTallies(finish,pnt,this->getMacroMacroSigT(E),0);
 				return finish;
 			}
 			//while the neutron is in this cell
 			while(inCell) {
-				intercept=this->findIntercept(finish);
-				dis=vec::getDistance(pnt,intercept); //find distance to intercept
-				x=-std::log(getSquiggle())/this->getMacroMacroSigT(E); 
-				//find MC distance traveled.
-				if(x<dis) {
-					mat= selectMat(E);
-					finish=materials[mat].randomWalk(startIntern); //do the monte Carlo
-					if(finish.getType()==event::ABSORB||
-							finish.getType()==event::LEAK){ 
-						//if the neutron died
+				try{
+					intercept=this->findIntercept(finish);
+					dis=vec::getDistance(pnt,intercept); 
+					//find distance to intercept
+					x=-std::log(getSquiggle())/this->getMacroMacroSigT(E); 
+					//find MC distance traveled.
+					if(x<dis) {
+						mat= selectMat(E);
+						finish=materials[mat].randomWalk(startIntern); 
+						//do the monte Carlo
+						if(finish.getType()==event::ABSORB||
+								finish.getType()==event::LEAK)
+						{ 
+							//if the neutron died
+							inCell=false;
+						}
+						this->doTallies(finish,pnt,
+ 							this->getMacroMacroSigT(E),mat);
+						startIntern=finish; //update for next round
+						pnt=startIntern.getPoint();		
+					} else { //if it exited the cell.
+						finish= event(E,W,event::NO_EVENT,intercept,dir);
 						inCell=false;
 					}
-					this->doTallies(finish,pnt,
-							this->getMacroMacroSigT(E),mat);
-					startIntern=finish; //update for next round
-					pnt=startIntern.getPoint();		
-				} else { //if it exited the cell.
-					finish= event(E,W,event::NO_EVENT,intercept,dir);
-					inCell=false;
+					finish.print();
+				} catch (int e) {
+					std::cout<<"It happened: ";
+					finish.print();
 				}
-				finish.print();
 			}
 			this->doTallies(finish,pnt,this->getMacroMacroSigT(E),mat);
 

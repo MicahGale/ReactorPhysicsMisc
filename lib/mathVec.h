@@ -87,6 +87,7 @@ class vec {
 		}
 		std::string print() const {
 			std::stringstream stream("[");
+			stream<<"[ ";
 			for( double hi: data) {
 				stream<<hi<<" , ";
 			}
