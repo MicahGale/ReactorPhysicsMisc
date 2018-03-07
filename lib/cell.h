@@ -93,7 +93,9 @@ class cell {
 			for(surface* ptr: surfaces) {
 				try{
 					intercept= ptr->findIntercept(start);
-					if( this->findInOut(intercept)) {
+					if( this->findInOut(intercept)
+				/*	&& vec::getDistance(intercept,start.getPoint())>1e-9*/) {
+						std::cout<<intercept.print()<<std::endl;
 						return intercept;
 					} //if in the cell it's probably the right one
 					//TODO implement more rigurous checks if we do circly things
@@ -103,6 +105,7 @@ class cell {
 				}
 			}
 			//if we got to this point there were no intercepts... throw an error
+			throw "hi";
 			throw 20;
 		}
 		/**
