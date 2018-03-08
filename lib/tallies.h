@@ -20,9 +20,8 @@ class meshTally: public tally {
 		 *
 		 */
 		void genMesh(double xMin, double xMax,int bins) {
-			double stepSize;
 
-			stepSize=(xMax-xMin)/bins; //find the size of the bins
+			stepSize=(xMax-xMin)/((double)(bins)); //find the size of the bins
 			meshBounds.reserve(bins+1); //grow to size
 			//march through all bounds
 			for(double val=xMin;val<=xMax;val+=stepSize) {
@@ -39,8 +38,8 @@ class meshTally: public tally {
 
 			x=pnt.get(0); //get the x value
 			for(int i=0;i<meshBounds.size();i++) {
-				if(x>=meshBounds[i]) {
-					return i;
+				if(x<=meshBounds[i]) {
+					return i-1;
 				}
 			}
 			return -1;
@@ -66,6 +65,7 @@ class collideTally: public meshTally {
 
 			type=end.getType();
 			if(type!=event::NO_EVENT&&type!=event::LEAK) { // check this was a collsion
+				//end.print();
 				bin=this->findMesh(end.getPoint());
 				buffer[bin]+=end.getW();  //add the weight to the buffer
 				//wow that's straight forward
@@ -74,6 +74,7 @@ class collideTally: public meshTally {
 		}
 		void flushTally() {
 			for(int i=0; i<buffer.size();i++) {
+				//std::cout<<"Tally: "<<i<<" Value: "<<mean[i]<<std::endl;
 				mean[i]+=buffer[i]; //move the mean over
 				meanSquare[i]+=buffer[i]*buffer[i];
 				buffer[i]=0; //clear it out for next one
@@ -117,7 +118,7 @@ class trackTally: public meshTally {
 			W=end.getW()*sigT; //add sigma_T to get that stuff
 			dis=vec::getDistance(end.getPoint(),start); //get the flight distance
 			displacement=end.getPoint()-start;
-			xDis=displacement.get(0);  //project onto the x axis
+			xDis=fabs(displacement.get(0));  //project onto the x axis
 			startMesh=this->findMesh(start); //find the limits
 			endMesh=this->findMesh(end.getPoint()); //find the limits
 			if(startMesh<endMesh) { //if going left to right
@@ -131,17 +132,25 @@ class trackTally: public meshTally {
 				botX=end.getPoint().get(0);
 				topX=start.get(0);
 			}
-			buffer[botX]+=W*dis*(meshBounds[botX+1]-botX)/xDis; //add the edge contribution
+			if(top==bot) {  //if only in one mesh grid
+				buffer[bot]+=W*dis; //just add the whole path length to that grid
+			} else {
+				buffer[bot]+=W*dis*(meshBounds[bot+1]-botX)/xDis; 
+				//add the edge contribution
 
-			for(int i=botX+1;i<topX;i++) {  //fill in all of the mesh points in between
-				buffer[i]+=W*dis*stepSize/xDis;
+				for(int i=bot+1;i<top;i++) {  
+					//fill in all of the mesh points in between
+					buffer[i]+=W*dis*stepSize/xDis;
+				}
+				buffer[top]+=W*dis*(topX-meshBounds[top])/xDis;
+			       	//add top edge contribution
 			}
-			buffer[topX]+=W*dis*(topX-meshBounds[topX])/xDis; //add top edge contribution
 
 
 		}
                 void flushTally() {
                         for(int i=0; i<buffer.size();i++) {
+				std::cout<<"Tally: "<<i<<" Val: "<<buffer[i]<<std::endl;
                                 mean[i]+=buffer[i]; //move the mean over
                                 meanSquare[i]+=buffer[i]*buffer[i];
                                 buffer[i]=0; //clear it out for next one
@@ -153,9 +162,11 @@ class trackTally: public meshTally {
                         ans.resize(meshBounds.size()-1);  //setup the size
 
                         for(int i=0;i<meshBounds.size()-1;i++) {
-                                ans[i].resize(2);  //sqwoosh it! screw spelling! viva la caffiene!
-                                ans[i][0]=mean[i]/W; //get the mean
-                                ans[i][1]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
+                                ans[i].resize(3);  //sqwoosh it! screw spelling! viva la caffiene!
+                                ans[i][0]=(meshBounds[i]+meshBounds[i+1])/2; //the spatial part!
+                                ans[i][1]=mean[i]/W; //get the mean
+                                ans[i][2]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
+
                         }
                         return ans;
                 }
