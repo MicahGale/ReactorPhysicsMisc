@@ -12,7 +12,7 @@ static double getSquiggle();
 #include "../lib/universe.h"
 
 static universe worldBuild();
-static void dumpData(universe& shire);
+static void dumpData(universe& shire, int N);
 static double getSquiggle() {
         double squiggle=(rand()/((double)(RAND_MAX)+1));
         return squiggle;
@@ -22,14 +22,17 @@ static double getSquiggle() {
 int main() {
 	universe shire=worldBuild();
 	//shire.setSeed(132181200);
-	shire.randomWalk(10000,1000);
-	dumpData(shire);
+	//shire.randomWalk(100,1);
+	int neutrons=(int)1e6;
+	shire.randomWalk(neutrons,1);
+	dumpData(shire,neutrons);
 	return 0;
 }
-static void dumpData(universe& shire) {
+static void dumpData(universe& shire,int N) {
 	std::vector<std::vector<double>>buffer;
 	std::ofstream out;
 	
+	double w=(double)N;
 	std::vector<int> cells {0,1};
 	std::vector<int> tall {0,1};
 	std::vector<std::string> fileName {"FluxByCollide.csv","FluxbyPath.csv"};
@@ -38,7 +41,7 @@ static void dumpData(universe& shire) {
 		out<<"Space![x],Mean!,Std.Dev!!!"<<std::endl;
 		
 		for(int cell: cells) {
-			buffer=shire.getTallyData(cell,i,1); //get the tally data
+			buffer=shire.getTallyData(cell,i,w); //get the tally data
 			for(std::vector<double> yup: buffer) {
 				out<<yup[0]<<","<<yup[1]<<","<<yup[2]<<std::endl; //write that line!!
 			}

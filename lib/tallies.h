@@ -150,7 +150,7 @@ class trackTally: public meshTally {
 		}
                 void flushTally() {
                         for(int i=0; i<buffer.size();i++) {
-				std::cout<<"Tally: "<<i<<" Val: "<<buffer[i]<<std::endl;
+				//std::cout<<"Tally: "<<i<<" Val: "<<buffer[i]<<std::endl;
                                 mean[i]+=buffer[i]; //move the mean over
                                 meanSquare[i]+=buffer[i]*buffer[i];
                                 buffer[i]=0; //clear it out for next one

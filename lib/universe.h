@@ -62,8 +62,12 @@ class universe {
 					srand((batchCnt*BatchSize+ntrns)*100+SEED); 
 					history=nSource->getNextNeutron(W);//start a neutron
 					//clear out the old nearest neighbor
-					neighbors= std::vector<int>(0); 
-					std::cout<<"Neutron: "<<ntrns<<"Batch:"<<batchCnt<<std::endl;
+					neighbors= std::vector<int>(0);
+				       if(ntrns%100==0) 
+				       {	
+						std::cout<<"Neutron: "<<ntrns
+							<<" Batch: "<<batchCnt<<std::endl;
+					}
 					while(isAlive) {
 						cell=this->findCell(history.getPoint(),neighbors);
 						//std::cout<<"Cell: "<<cell<<std::endl;
