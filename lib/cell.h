@@ -94,7 +94,7 @@ class cell {
 				try{
 					intercept= ptr->findIntercept(start);
 					if( this->findInOut(intercept)
-				/*	&& vec::getDistance(intercept,start.getPoint())>1e-9*/) {
+					&& vec::getDistance(intercept,start.getPoint())>1e-9) {
 						std::cout<<intercept.print()<<std::endl;
 						return intercept;
 					} //if in the cell it's probably the right one
@@ -204,6 +204,8 @@ class cell {
 					//find MC distance traveled.
 					if(x<dis) {
 						mat= selectMat(E);
+						newPnt=pnt+x*dir; //transport the particle
+						startIntern=event(E,W,startIntern.getType(),newPnt,dir);	
 						finish=materials[mat].randomWalk(startIntern); 
 						//do the monte Carlo
 						if(finish.getType()==event::ABSORB||
@@ -215,12 +217,13 @@ class cell {
 						this->doTallies(finish,pnt,
  							this->getMacroMacroSigT(E),mat);
 						startIntern=finish; //update for next round
-						pnt=startIntern.getPoint();		
+						pnt=startIntern.getPoint();
+						dir=startIntern.getDir();		
 					} else { //if it exited the cell.
 						finish= event(E,W,event::NO_EVENT,intercept,dir);
 						inCell=false;
 					}
-					finish.print();
+					//finish.print();
 				} catch (int e) {
 					std::cout<<"It happened: ";
 					finish.print();
