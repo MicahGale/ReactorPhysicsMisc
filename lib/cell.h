@@ -76,9 +76,11 @@ class cell {
 			for(int i=0; i<surfaces.size();i++) {
 				//if on the wrong side it's not inside
 				ptr=surfaces[i];
+				//std::cout<<"Surface: "<<i<<std::endl;
 				try{
 					if(ptr->findSide(point)	!=side[i]) {
 						inCell=false;
+						//std::cout<<"Patrick's not here"<<std::endl;
 					}
 				} catch( int e) {
 					//silently catch the exception 5
@@ -95,7 +97,7 @@ class cell {
 					intercept= ptr->findIntercept(start);
 					if( this->findInOut(intercept)
 					&& vec::getDistance(intercept,start.getPoint())>1e-9) {
-						std::cout<<intercept.print()<<std::endl;
+					//	std::cout<<intercept.print()<<std::endl;
 						return intercept;
 					} //if in the cell it's probably the right one
 					//TODO implement more rigurous checks if we do circly things
@@ -177,13 +179,12 @@ class cell {
 		event walkRandomly(const event& start) {
 			double x, dis,E,W;
 			vec intercept,pnt,dir,newPnt;
-			event finish,startIntern;
+			event finish;
 			bool inCell;
 			int mat;
 
 			inCell=true;
 			finish=start;
-			startIntern=start;
 			E=start.getE();
 			W=start.getW();
 			pnt=start.getPoint();
@@ -191,8 +192,7 @@ class cell {
 			//if this cell is a vacuum just leak the neutron asap
 			if(this->isVac()) {
 				finish=event(E,W,event::LEAK,pnt,dir);
-				this->doTallies(finish,pnt,this->getMacroMacroSigT(E),0);
-				return finish;
+				inCell=false; //kill it
 			}
 			//while the neutron is in this cell
 			while(inCell) {
@@ -205,8 +205,8 @@ class cell {
 					if(x<dis) {
 						mat= selectMat(E);
 						newPnt=pnt+x*dir; //transport the particle
-						startIntern=event(E,W,startIntern.getType(),newPnt,dir);	
-						finish=materials[mat].randomWalk(startIntern); 
+						finish=event(E,W,finish.getType(),newPnt,dir);
+						finish=materials[mat].randomWalk(finish); 
 						//do the monte Carlo
 						if(finish.getType()==event::ABSORB||
 								finish.getType()==event::LEAK)
@@ -216,17 +216,17 @@ class cell {
 						}
 						this->doTallies(finish,pnt,
  							this->getMacroMacroSigT(E),mat);
-						startIntern=finish; //update for next round
-						pnt=startIntern.getPoint();
-						dir=startIntern.getDir();		
+						 //update for next round
+						pnt=finish.getPoint();
+						dir=finish.getDir();		
 					} else { //if it exited the cell.
 						finish= event(E,W,event::NO_EVENT,intercept,dir);
 						inCell=false;
 					}
 					//finish.print();
 				} catch (int e) {
-					std::cout<<"It happened: ";
-					finish.print();
+					//std::cout<<"It happened: ";
+					////finish.print();
 				}
 			}
 			this->doTallies(finish,pnt,this->getMacroMacroSigT(E),mat);

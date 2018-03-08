@@ -21,9 +21,9 @@ static double getSquiggle() {
 
 int main() {
 	universe shire=worldBuild();
-	shire.randomWalk(100,1);
-	//shire.randomWalk(100000,100);
-	//dumpData(shire);
+	//shire.setSeed(132181200);
+	shire.randomWalk(10000,1000);
+	dumpData(shire);
 	return 0;
 }
 static void dumpData(universe& shire) {

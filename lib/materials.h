@@ -162,13 +162,15 @@ class material {
                 return this->getMacroSigS(E)+this->getMacroSigA(E);
         }
 	/**
-	 * Performs a random walk 
+	 * Performs a random interaction at the point.
+	 * We know an interaction occured at this point in this material
+	 * Now just determining what type of interaction
 	 *@param start- the incoming neutron history
 	 *@return an event with the energy and event type
 	 */
 	event randomWalk(const event& start) {
 		double total, squiggle, mu,mu_cm, phi,E, W;
-		vec dir;
+		vec dir,end;
 		event output;
 
 		E=start.getE();
@@ -184,7 +186,7 @@ class material {
 			mu=2*getSquiggle()-1; //decide on new polar angle
 			phi=2*M_PI*getSquiggle(); //decide new azimuth angle
 			dir=dir.rotate(mu,phi);
-
+			
 			//calculate scatter E
 			//Solved with: <https://www.wolframalpha.com/input/?i=solve+u%3D(1%2BA*v)%2F(sqrt(A%5E2%2B2*A*v%2B1))+for+v>
 			//mu_cum=(std::pow(A*A*A*A*mu*mu+A*A*mu*mu*mu*mu-A*A*mu*mu,0.5)+A*mu*mu-A)/(A*A);
@@ -194,7 +196,11 @@ class material {
 		} else  {  //otherwise assume absorbed. TODO implement fission if needed
 			output=event(0,W, event::ABSORB,start.getPoint(),dir);
 		}
+		/*std::cout<<"In:";
+		start.print();
+		std::cout<<"Out: ";
 		output.print();
+		*/
 		return output;	
 	}
 	//################################SLBW Section#################################

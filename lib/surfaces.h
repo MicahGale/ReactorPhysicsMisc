@@ -28,7 +28,7 @@ class xPlane: public surface {
 			point=start.getPoint();
 			dir=start.getDir();
 			t=x-point.get(0); //find x displacement
-			std::cout<<"X: "<<x<<" T: "<<t<<std::endl;
+			//std::cout<<"X: "<<x<<" T: "<<t<<std::endl;
 			if(t>0==dir.get(0)>0) {  //if the neutron is headed for the plane get t
 				//the intercept
 				t=t/dir.get(0); //find how many path lengths to intercept
@@ -36,7 +36,7 @@ class xPlane: public surface {
 			} else {
 				throw 20;
 			}
-			std::cout<<ret.print()<<std::endl;
+			//std::cout<<ret.print()<<std::endl;
 			return ret;
 		}
 		/**

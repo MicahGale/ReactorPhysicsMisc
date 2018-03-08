@@ -5,6 +5,7 @@ class universe {
 	private:
 		std::vector<cell> cells;
 		source* nSource;
+		int SEED;
 
 	public:
 		universe(std::vector<cell> cells,
@@ -14,11 +15,15 @@ class universe {
 		}
 		int findCell(const vec& pnt) {
 			for(int i=0;i<cells.size();i++) { //test all cell
+				//std::cout<<"Cell: "<<i<<std::endl;
 				if( cells[i].findInOut(pnt)) {
 					return i; //if it's in this cell give up you found it
 				}
 			}
 			return -1; //well your universe is screwed. Prepare for apocolypse
+		}
+		void setSeed(int seed) {
+			SEED=seed;
 		}
 		int findCell(const vec& pnt, const std::vector<int>& neighbor) {
 			for(int neigh: neighbor) {
@@ -54,12 +59,14 @@ class universe {
 				for(int ntrns=0; ntrns<BatchSize;ntrns++) {
 					isAlive=true;
 					//jump 100 random numbers for every neutron
-					srand((batchCnt*BatchSize+ntrns)*100); 
+					srand((batchCnt*BatchSize+ntrns)*100+SEED); 
 					history=nSource->getNextNeutron(W);//start a neutron
-					std::cout<<"Neutron: "<<ntrns<<" Batch: "<<batchCnt<<std::endl<<std::endl<<std::endl;
+					//clear out the old nearest neighbor
+					neighbors= std::vector<int>(0); 
+					std::cout<<"Neutron: "<<ntrns<<"Batch:"<<batchCnt<<std::endl;
 					while(isAlive) {
 						cell=this->findCell(history.getPoint(),neighbors);
-						std::cout<<"Cell: "<<cell<<std::endl;
+						//std::cout<<"Cell: "<<cell<<std::endl;
 						//find where you are
 						history=this->cells[cell].walkRandomly(history);
 						if(history.getType()==event::ABSORB||
