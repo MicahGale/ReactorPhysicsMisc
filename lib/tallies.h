@@ -80,19 +80,21 @@ class collideTally: public meshTally {
 				buffer[i]=0; //clear it out for next one
 			}
 		}
-		std::vector<std::vector<double>> getData(double W) {
-			this->flushTally();
-			std::vector<std::vector<double>> ans;
-			ans.resize(meshBounds.size()-1);  //setup the size
+                std::vector<std::vector<double>> getData(double N) {
+                        this->flushTally();
+                        std::vector<std::vector<double>> ans;
+                        ans.resize(meshBounds.size()-1);  //setup the size
 
-			for(int i=0;i<meshBounds.size()-1;i++) {
-				ans[i].resize(3);  //sqwoosh it! screw spelling! viva la caffiene!
-				ans[i][0]=(meshBounds[i]+meshBounds[i+1])/2; //the spatial part!
-				ans[i][1]=mean[i]/W; //get the mean
-				ans[i][2]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
-			}
-			return ans;
-		}
+                        for(int i=0;i<meshBounds.size()-1;i++) {
+                                ans[i].resize(3);  //sqwoosh it! screw spelling! viva la caffiene!
+                                ans[i][0]=(meshBounds[i]+meshBounds[i+1])/2; //the spatial part!
+                                ans[i][1]=mean[i]/N; //get the mean
+                                ans[i][2]=pow(meanSquare[i]/(N)-mean[i]*mean[i]/(N*N),0.5);
+
+                        }
+                        return ans;
+                }
+
 };
 
 class trackTally: public meshTally {
@@ -156,7 +158,7 @@ class trackTally: public meshTally {
                                 buffer[i]=0; //clear it out for next one
                         }
                 }
-                std::vector<std::vector<double>> getData(double W) {
+                std::vector<std::vector<double>> getData(double N) {
                         this->flushTally();
                         std::vector<std::vector<double>> ans;
                         ans.resize(meshBounds.size()-1);  //setup the size
@@ -164,8 +166,8 @@ class trackTally: public meshTally {
                         for(int i=0;i<meshBounds.size()-1;i++) {
                                 ans[i].resize(3);  //sqwoosh it! screw spelling! viva la caffiene!
                                 ans[i][0]=(meshBounds[i]+meshBounds[i+1])/2; //the spatial part!
-                                ans[i][1]=mean[i]/W; //get the mean
-                                ans[i][2]=pow(mean[i]*mean[i]/(W*W)-meanSquare[i]/(W*W),0.5);
+                                ans[i][1]=mean[i]/N; //get the mean
+                                ans[i][2]=pow(meanSquare[i]/(N)-mean[i]*mean[i]/(N*N),0.5);
 
                         }
                         return ans;

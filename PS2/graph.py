@@ -7,6 +7,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import math
 
 collide=[]
 path=[]
@@ -18,6 +19,7 @@ with open('FluxByCollide.csv', 'r') as csvFile:
         buffer=[]
         for cell in row:
             buffer.append(float(cell.strip())) #converts string to number
+        buffer[2]=math.sqrt(buffer[2]) #convert the variance to a std dev
         collide.append(buffer) #shove it on the stack
 
 
@@ -30,15 +32,15 @@ with open('FluxbyPath.csv','r') as csvFile:
 
         for cell in row:
             buffer.append(float(cell.strip()))
-
+        buffer[2]=math.sqrt(buffer[2])
         path.append(buffer)
 
 path=np.asmatrix(path)
 collide=np.asmatrix(collide)
-
+print path
 #plt.scatter(path[:,0],path[:,1],label='Path-length tally')
-plt.errorbar(path[:,0],path[:,1],yerr=sqrt(path[:,2]),label='Path-length tally',fmt='o')
-plt.errorbar(collide[:,0],collide[:,1],yerr=sqrt(collide[:,2]), label='Collison tally',fmt='o')
+plt.errorbar(path[:,0],path[:,1],yerr=path[:,2],label='Path-length tally',fmt='o')
+plt.errorbar(collide[:,0],collide[:,1],yerr=collide[:,2], label='Collison tally',fmt='o')
 #plt.plot(path[:,0],path[:,1],label='Path-length tally')
 #plt.plot(collide[:,0],collide[:,1],label='Collision tally')
 plt.axvline(x=0)

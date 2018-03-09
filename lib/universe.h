@@ -53,7 +53,7 @@ class universe {
 			std::vector<int> neighbors;
 
 			//run the batches
-			W=1/((double)(BatchSize)); //start off with the tallies being per start neutron
+			W=1;///((double)(BatchSize)); //start off with the tallies being per start neutron
 			for(int batchCnt=0;batchCnt<Batches;batchCnt++) {
 				//run a batch
 				for(int ntrns=0; ntrns<BatchSize;ntrns++) {
