@@ -52,8 +52,20 @@ class rocketonium  {
 double Q1C() {
 	rocketonium rocket; //init that stuff
 }
+void testRocket() {
+	rocketonium rocket;
+	double start=999;
+	double stepSize=0.05;
+	double end=1000.5;
 
-int main() {
-	
+	for(double E=start;E<end;E+=stepSize) {
+		std::cout<<"E: "<<E<<" Sig_t: "<<rocket.getSigT(E)<<std::endl;
+		
+	}
+
+
+
+}
+int main() {	
 	return 1;
 }
