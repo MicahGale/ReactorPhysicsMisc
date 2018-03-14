@@ -39,6 +39,9 @@ class material {
 	*/
 	static const double BOLTZ_K(){return 8.6173303e-5;}
 	static constexpr double BARNS_TO_CM=1e-24;
+	static const short int NR=0xA1; 
+	static const short int WR=0xB1;
+	static const short int IR=0xc1;
 	/**
 	 *Constructs a vacuum material
 	 *
@@ -262,7 +265,7 @@ class material {
 		return sum;
 	}
         double NR_RI_intGrand(double E, double sigD) {
-                        return getMicroSigA(E)/(E*(getMicroSigT(E)+sigD));
+                        return (sigPot+sigD)*getMicroSigA(E)/(E*(getMicroSigT(E)+sigD));
                 }
                 double get_NR_flux( double E, double sigD) {
                         return (sigPot+sigD)/(E*(getMicroSigT(E)+sigD));
@@ -272,31 +275,35 @@ class material {
                         return sigD/(E*(getMicroSigA(E)+sigD));
                 }
                 double WR_RI_intGrand(double E, double sigD) {
-                        return getMicroSigA(E)/(E*(getMicroSigA(E)+sigD));
+                        return sigD*getMicroSigA(E)/(E*(getMicroSigA(E)+sigD));
                 }
-
-                double collapseXS_NR(double lowE, double upE,double sigD, int bins) {
+		double IR_RI_intGrand(double E, double sigD, double lambda) {
+			return 0;
+		}
+		double get_IR_flux(double E, double sigD, double lambda) {
+			return 0;
+		}
+                vector<double> collapseXS(short int mode, double lowE, double upE,double sigD, double lambda int bins) {
                         vector<double> RI, flux;
-                        double stepSize;
+                        double stepSize,RIbuff, fluxBuff;
 
                         stepSize=(upE-lowE)/bins;
                         for(double E=lowE;E<=upE;E+=stepSize) {
-                                RI.push_back(NR_RI_intGrand(E,sigD));
-                                flux.push_back(get_NR_flux(E,sigD));
+				if(mode==NR) {
+					RIbuff=NR_RI_intGrand(E,sigD);
+					fluxBuff=get_NR_flux(E,sigD);
+				} else if (mode==WR) {
+					RIbuff=WR_RI_intGrand(E,sigD);
+					fluxBuff=get_WR_flux(E,sigD);
+				} else if(mode==IR) {
+					RIbuff =  IR_RI_intGrand(E, sigD, lambda);
+					fluxBuff= get_IR_flux(E, sigD,lambda);
+				}
+                                RI.push_back(RIbuff);
+                                flux.push_back(fluxBuff);
                         }
-                        return (sigPot+sigD)*trapInt(RI,stepSize)/trapInt(flux,stepSize);
-                        //do the collapse integral
-                }
-                double collapseXS_WR(double lowE, double upE,double sigD, int bins) {
-                        vector<double> RI, flux;
-                        double stepSize;
-
-                        stepSize=(upE-lowE)/bins;
-                        for(double E=lowE;E<=upE;E+=stepSize) {
-                                RI.push_back(WR_RI_intGrand(E,sigD));
-                                flux.push_back(get_WR_flux(E,sigD));
-                        }
-                        return (sigD)*trapInt(RI,stepSize)/trapInt(flux,stepSize);
+			RIbuff=trapInt(RI,stepSize);
+                        return vector<doube>{RIbuff, RIbuff/trapInt(flux,stepSize)};
                         //do the collapse integral
                 }
 
