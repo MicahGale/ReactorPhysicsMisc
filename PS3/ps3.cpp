@@ -154,16 +154,42 @@ void Q2() {
 		<<" WR: "<<rocket.collapseXS_WR(lowE,upE,sigD,bins)<<endl;
 }
 void Q3() {
-	vector<double> Temp, EO,GG,GN;
+	vector<double> Temp, E0,GG,GN,RIval,flux;
 	vector<vector<double>> bounds;
+	double stepSize, RI;
+	material uran;
+	ofstream out; 
+	int bins;
 
-	Temp={300,1e3};
+	bins=500;
+	Temp={300,1000};
 	bounds={{6,10},{10,25},{25,50}};
-        vector<double> E0 {6.673491, 20.87152,36.68212}; //alll units in eV
-        vector<double> GG {0.02300000, 0.02286379,0.02300225};
-        vector<double> GN {0.001475792, 0.01009376,0.03354568};
-
-
+        E0= {6.673491, 20.87152,36.68212}; //alll units in eV
+        GG ={0.02300000, 0.02286379,0.02300225};
+        GN ={0.001475792, 0.01009376,0.03354568};
+	
+	out.open("Q3RI.tex",ios::trunc);
+	out<<"\\begin{tabular}{|c|c|c|c|c|c|c|}"<<endl;
+	out<<"\\hline \\textbf{Temp (K)}& \\multicolumn{2}{|c|}{\\textbf{6-10eV}} &\\multicolumn{2}{|c|}{\\textbf{10-25eV}} & \\multicolumn{2}{|c|}{\\textbf{25-50eV}}\\\\\\hline  " <<endl;
+	out<<"&\\textbf{RI} & \\textbf{XS} &\\textbf{RI} & \\textbf{XS} &\\textbf{RI} & \\textbf{XS} \\\\\\hline"<<endl;
+	for(double T: Temp) {
+		uran=material("U-238",238,1e24,5.0,0,E0,GG,GN,T); //doppler broaden the problem.
+		out<<T; //write the rows temperature
+		for(vector<double> limits: bounds) {
+			stepSize=(limits[1]-limits[0])/bins; //get that step size
+			RIval={};
+			flux={};
+			for(double E=limits[0];E<=limits[1];E+=stepSize) {
+				RIval.push_back(1/E*uran.getMicroSigA(E)); //calc infin dilute
+				flux.push_back(1/E);
+			}
+			RI=trapInt(RIval,stepSize);
+			out<<" & "<<RI<<" & "<<RI/trapInt(flux,stepSize);
+		}
+		out<<"\\\\\\hline"<<endl;
+	}
+	out<<"\\end{tabular}"<<endl;
+	out.close();
 }
 
 void testRocket() {
