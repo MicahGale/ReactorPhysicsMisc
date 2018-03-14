@@ -9,6 +9,10 @@
 #include <stdlib.h>                           
 #include <cmath>
 
+double getSquiggle();
+#include "../lib/mathVec.h"
+#include "../lib/materials.h"
+
 using namespace std;
 
 double trapInt(vector<double>& vals,double stepSize);
@@ -107,7 +111,7 @@ double trapInt(vector<double> & vals, double stepSize) {
 	return sum;
 
 }
-double Q1C() {
+void Q1C() {
 	rocketonium rocket; //init that stuff
 	double sigD, C_nat_sig_t,lowE,upE;
 	vector<double> dilution;
@@ -119,12 +123,12 @@ double Q1C() {
 	dilution= {10,100,1e3};
 	lowE=1.0;
 	upE=5e3;
-	bins=500e3;
+	bins=1e6;
 
 	//file stuff
 	out.open("Q1Cxs.tex",ios::trunc);  //opens it
 	out<<"\\begin{tabular}{|c|c|c|}"<<endl;
-	out<<"\\textbf{C/R ratio} & NR $\\sigma_a$& WR$\\sigma_a$ \\\\\\hline"<<endl;
+	out<<"\\hline \\textbf{C/R ratio} & NR $\\sigma_a$& WR$\\sigma_a$ \\\\\\hline"<<endl;
 
 	for(double dilut: dilution) {
 		sigD=dilut*C_nat_sig_t; //calculate the dilution cross-section
@@ -135,6 +139,33 @@ double Q1C() {
 	out<<"\\end{tabular}"<<endl;
 	out.close();
 }
+void Q2() {
+	rocketonium rocket;
+	double sigD,lowE,upE;
+	int bins;
+
+	lowE=1;
+	upE=5e3;
+	bins=1e6;
+
+	sigD=1259.9; //[b]
+
+	cout<<"SigD"<<sigD<<" NR: "<<rocket.collapseXS_NR(lowE,upE,sigD,bins)
+		<<" WR: "<<rocket.collapseXS_WR(lowE,upE,sigD,bins)<<endl;
+}
+void Q3() {
+	vector<double> Temp, EO,GG,GN;
+	vector<vector<double>> bounds;
+
+	Temp={300,1e3};
+	bounds={{6,10},{10,25},{25,50}};
+        vector<double> E0 {6.673491, 20.87152,36.68212}; //alll units in eV
+        vector<double> GG {0.02300000, 0.02286379,0.02300225};
+        vector<double> GN {0.001475792, 0.01009376,0.03354568};
+
+
+}
+
 void testRocket() {
 	rocketonium rocket;
 	double start=999;
@@ -150,6 +181,8 @@ void testRocket() {
 
 }
 int main() {
-	Q1C();	
+//	Q1C();
+//	Q2();
+	Q3();	
 	return 1;
 }
