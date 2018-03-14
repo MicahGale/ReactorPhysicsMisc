@@ -156,7 +156,9 @@ class material {
                 return this->getMacroSigP(E)+
                         this->N*this->getMicroSigSRes(E)*BARNS_TO_CM;
         }
-
+	double getMicroSigT(double E) {
+		return this->getMicroSigP(E)+this->getMicroSigA(E);
+	}
 	double getMacroSigA(double E) {
                 return this->N*this->getMicroSigA(E)*BARNS_TO_CM;
         }
@@ -283,8 +285,8 @@ class material {
 		double get_IR_flux(double E, double sigD, double lambda) {
 			return 0;
 		}
-                vector<double> collapseXS(short int mode, double lowE, double upE,double sigD, double lambda int bins) {
-                        vector<double> RI, flux;
+		std::vector<double> collapseXS(short int mode, double lowE, double upE,double sigD, double lambda, int bins) {
+			std::vector<double> RI, flux;
                         double stepSize,RIbuff, fluxBuff;
 
                         stepSize=(upE-lowE)/bins;
@@ -303,7 +305,7 @@ class material {
                                 flux.push_back(fluxBuff);
                         }
 			RIbuff=trapInt(RI,stepSize);
-                        return vector<doube>{RIbuff, RIbuff/trapInt(flux,stepSize)};
+                        return std::vector<double>{RIbuff, RIbuff/trapInt(flux,stepSize)};
                         //do the collapse integral
                 }
 
