@@ -261,4 +261,43 @@ class material {
 		}
 		return sum;
 	}
+        double NR_RI_intGrand(double E, double sigD) {
+                        return getMicroSigA(E)/(E*(getMicroSigT(E)+sigD));
+                }
+                double get_NR_flux( double E, double sigD) {
+                        return (sigPot+sigD)/(E*(getMicroSigT(E)+sigD));
+                }
+
+                double get_WR_flux(double E, double sigD) {
+                        return sigD/(E*(getMicroSigA(E)+sigD));
+                }
+                double WR_RI_intGrand(double E, double sigD) {
+                        return getMicroSigA(E)/(E*(getMicroSigA(E)+sigD));
+                }
+
+                double collapseXS_NR(double lowE, double upE,double sigD, int bins) {
+                        vector<double> RI, flux;
+                        double stepSize;
+
+                        stepSize=(upE-lowE)/bins;
+                        for(double E=lowE;E<=upE;E+=stepSize) {
+                                RI.push_back(NR_RI_intGrand(E,sigD));
+                                flux.push_back(get_NR_flux(E,sigD));
+                        }
+                        return (sigPot+sigD)*trapInt(RI,stepSize)/trapInt(flux,stepSize);
+                        //do the collapse integral
+                }
+                double collapseXS_WR(double lowE, double upE,double sigD, int bins) {
+                        vector<double> RI, flux;
+                        double stepSize;
+
+                        stepSize=(upE-lowE)/bins;
+                        for(double E=lowE;E<=upE;E+=stepSize) {
+                                RI.push_back(WR_RI_intGrand(E,sigD));
+                                flux.push_back(get_WR_flux(E,sigD));
+                        }
+                        return (sigD)*trapInt(RI,stepSize)/trapInt(flux,stepSize);
+                        //do the collapse integral
+                }
+
 };
