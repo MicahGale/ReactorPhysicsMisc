@@ -240,9 +240,12 @@ void testRocket() {
 	double start=999;
 	double stepSize=0.05;
 	double end=1000.5;
+	ofstream out;
 
+	out.open("testRocket.csv");
+	out<<"E, sig_t"<<endl;
 	for(double E=start;E<end;E+=stepSize) {
-		std::cout<<"E: "<<E<<" Sig_t: "<<rocket.getSigT(E)<<std::endl;
+		out<<E<<" , "<<rocket.getSigT(E)<<std::endl;
 		
 	}
 
@@ -253,6 +256,7 @@ int main() {
 //	Q1C();
 //	Q2();
 //	Q3();
-	Q4();	
+    testRocket();	
+//	Q4();	
 	return 1;
 }
