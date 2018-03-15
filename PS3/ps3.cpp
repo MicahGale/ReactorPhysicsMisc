@@ -10,12 +10,12 @@
 #include <cmath>
 
 double getSquiggle();
+double trapInt(std::vector<double> & vals, double stepSize);
 #include "../lib/mathVec.h"
 #include "../lib/materials.h"
 
 using namespace std;
 
-double trapInt(vector<double>& vals,double stepSize);
 class rocketonium  {
 	private:	
 		 std::vector<double> peaks ={1e3, 2e3 };
@@ -192,6 +192,49 @@ void Q3() {
 	out.close();
 }
 
+void Q4() {
+        vector<double> dilute, E0,GG,GN,RIval,flux,output;
+	vector<short int> resModel;
+        vector<vector<double>> bounds;
+        double stepSize, RI,lambda;
+        material uran;
+        ofstream out;
+        int bins;
+
+        bins=50000;
+	lambda=0.5;
+        dilute={20000,200,20};
+	resModel={material::NR,material::WR,material::IR};
+        bounds={{6,10},{10,25},{25,50}};
+        E0= {6.673491, 20.87152,36.68212}; //alll units in eV
+        GG ={0.02300000, 0.02286379,0.02300225};
+        GN ={0.001475792, 0.01009376,0.03354568};
+
+        out.open("Q4.tex",ios::trunc);
+        out<<"\\begin{tabular}{|c|c|c|c|c|c|c|}"<<endl;
+        out<<"\\hline \\textbf{Dilution (b)}& \\multicolumn{2}{|c|}{\\textbf{6-10eV}} &\\multicolumn{2}{|c|}{\\textbf{10-25eV}} & \\multicolumn{2}{|c|}{\\textbf{25-50eV}}\\\\\\hline  " <<endl;
+        out<<"&\\textbf{RI} & \\textbf{XS} &\\textbf{RI} & \\textbf{XS} &\\textbf{RI} & \\textbf{XS} \\\\\\hline"<<endl;
+	uran=material("U-238",238,1e24,5.0,0,E0,GG,GN,300); //doppler broaden the problem.
+	for(double sigD: dilute) {
+		for(short int res: resModel) {
+			out<<sigD<<" ";
+			if(res==material::NR)
+				out<<"NR ";
+			if(res==material::WR)
+				out<<"WR ";
+			if(res==material::IR)
+				out<<" IR ";
+			for(vector<double> bound: bounds) {
+				output=uran.collapseXS(res,bound[0],bound[1],sigD,lambda,bins);
+				out<<" & "<< output[0]<<" & "<<output[1];
+			}
+			out<<"\\\\\\hline"<<endl;
+
+		}
+	}
+	out<<"\\end{tabular}"<<endl;
+	out.close();	
+}
 void testRocket() {
 	rocketonium rocket;
 	double start=999;
@@ -213,6 +256,7 @@ int main() {
 //	Q1C();
 //	Q2();
 //	Q3();
-	testRocket()	
+    testRocket();	
+//	Q4();	
 	return 1;
 }
