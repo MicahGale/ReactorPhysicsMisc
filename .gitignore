@@ -3,6 +3,7 @@
 *.*.swp
 *.csv
 *.tex
+*.xml
 *.exe.*
 *.*.stackdump
 *.png
